@@ -1,2 +1,2 @@
-# menu_app
-application created in curses
+#############################
+app made in curses by using python
