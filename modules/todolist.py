@@ -23,66 +23,91 @@ class Todolist:
 
             # display list of items
             # ----------------------------------------------------------------------------------{{{
-            for i, item in enumerate(self.d.keys()):
-                # self.d[item] is not 0
-                if not self.d[item]:
-                    n = 1
-                else:
-                    n = 2
+            for i in range(len(self.d)):
+                item = list(self.d)[i]
+                # False         or           True
+                n = 1 if not self.d[item] else 2
                 line = f'{i+1}) {item} | {str(self.d[item]):5}'
                 self.y[1] = len(line) if self.y[1] < len(line) else self.y[1]
-                line = f"{line:{self.y[1]}}"
-                scr.addstr(i, 0, line, self.colors(n))
+                scr.addstr(i, 0, f"{line:{self.y[1]}}", self.colors(n))
             if len(self.d) > self.y[0]:
-                line = f"{str(self.y[0]+1)+ ')' + list(self.d.keys())[self.y[0]]}"
+                line = f"{str(self.y[0]+1)+ ')' + list(self.d)[self.y[0]]}"
             else:
                 line = f"{self.y[0]+1})"
-            scr.addstr(self.y[0], 0, f"{' '*self.y[1]}", self.colors(4))
-            scr.addstr(self.y[0], 0, line, self.colors(3))
+
+            self.clrdis_line(scr, line, 3)
             # }}}----------------------------------------------------------------------------------
 
-            # when pressed a key
+            # press arrow 
             # {{{----------------------------------------------------------------------------------
             pressed_key = scr.getkey()
             if pressed_key in ('KEY_UP', 'KEY_DOWN', 'KEY_LEFT', 'KEY_RIGHT'):
                 # line 88
                 self.press_arrow(pressed_key)
+            # }}}
 
-            # reverse bool
+            # press enter
+            # {{{----------------------------------------------------------------------------------
             elif pressed_key == '\n':
-                try:
-                    k = list(self.d.keys())[self.y[0]]
-                    self.d[k] = not self.d[k]
-                except IndexError:
+                if len(self.d) == 0:
                     self.insert_mode(scr)
+                elif len(self.d) != self.y[0]:
+                    # self.y = 1 gdy list(self.d) = [' '] index 0
+                    k = list(self.d)[self.y[0]]
+                    self.d[k] = not self.d[k]
+            # }}}----------------------------------------------------------------------------------
 
-            # enter letter
+            # press a letter
+            # {{{-------------------------------------------------------------------------------
             elif pressed_key in self.a_z:
-                self.insert_mode(scr, pressed_key)
+                if len(self.d) == self.y[0]:
+                    # pressed_key is first letter
+                    self.insert_mode(scr, pressed_key)
+                else:
+                    self.insert_mode(scr, list(self.d)[self.y[0]])
 
             # }}}----------------------------------------------------------------------------------
+            
+            # display options
+            self.clrdis_line(scr, "nie dziala", y=self.y[0]+1)
+
+            scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y[0]}")
+
 
 
     def insert_mode(self, scr, item=''):
         "docstring of method enter_item"
+        
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
-        scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y[0]}")
         while True:
-            scr.addstr(self.y[0], 0, ' '*self.y[1], self.colors(4))
-            scr.addstr(self.y[0], 0, f'{self.y[0]+1}) {item}', self.colors(1))
+            self.y[1] = len(item) if self.y[1] < len(item) else self.y[1]
+            self.clrdis_line(scr, f'{self.y[0]+1}) {item}')
             key = scr.getkey()
             if key in ("KEY_BACKSPACE", '\b', '\x7f'):
                 item = item[:-1]
+            # press enter
+            #{{{-----------------------------------------------------------------------------------
             elif key in '\n':
-                if item in list(self.d.keys()):
+                if item in list(self.d):
                     scr.addstr(len(self.d)+1, 0, f'{repr(item)} juz istnieje')
                 else:
                     scr.addstr(scr.getmaxyx()[0]-1, 0, "SELECT")
                     self.y[0] += 1
                 break
+            #}}}-----------------------------------------------------------------------------------
             elif key in self.a_z:
                 item += key
-        self.d[item] = False
+
+        if len(self.d) == self.y[0]-1:
+            self.d[item] = False
+        else:
+            olditem = list(self.d)[self.y[0]-1]
+            self.d[item] = self.d.pop(olditem)
+
+    def clrdis_line(self, scr, line, n=1, y=0):
+        y = self.y[0] if y==0 else 0
+        scr.addstr(y, 0, ' '*self.y[1], self.colors(4))
+        scr.addstr(y, 0, line, self.colors(n))
 
     def press_arrow(self, key):
         "docstring press arrow"
