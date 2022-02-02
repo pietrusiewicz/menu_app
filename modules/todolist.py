@@ -7,12 +7,12 @@ class Todolist:
 
     def __init__(self, scr):
         # declaring program variables
-        #---------------------------------------------------------------------------------------{{{
+        # --------------------------------------------------------------------------------------{{{
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
         self.colors = lambda x: curses.color_pair(x)
         self.main(scr)
-        #}}}---------------------------------------------------------------------------------------
+        # }}}--------------------------------------------------------------------------------------
 
     def main(self, scr):
         "docstring of method"
@@ -26,11 +26,12 @@ class Todolist:
             w = (scr.getmaxyx()[1]//9)*2
             for i in range(len(self.d)):
                 item = list(self.d)[i]
-                # False         or           True
-                n = 1 if not self.d[item] else 2
+                # True         or           False
+                n = 2 if self.d[item] else 1
                 line = f'{i+1}) {item} | {str(self.d[item]):5}'
-                scr.addstr(i, w, f"{line:{w*2-1}}", self.colors(n))
+                scr.addstr(i, w, f"{line}", self.colors(n))
             # }}}----------------------------------------------------------------------------------
+
             # display selected item
             # {{{----------------------------------------------------------------------------------
             if len(self.d) > self.y:
@@ -38,7 +39,7 @@ class Todolist:
             else:
                 line = f"{self.y+1})"
             self.clrdis_line(scr, line, 3)
-            #self.clrdis_line(scr, "nie dziala", y=self.y[0])
+            self.clrdis_line(scr, "[d]elete [number]", y=1)
             # }}}----------------------------------------------------------------------------------
 
             # press arrow 
@@ -78,9 +79,14 @@ class Todolist:
 
     def clrdis_line(self, scr, line, n=1, y=0):
         w = (scr.getmaxyx()[1]//9)*2
-        y = self.y if y==0 else 0
-        scr.addstr(y, w, f"{'':{w}}", self.colors(4))
-        scr.addstr(y, w, line, self.colors(n))
+        if y == 0:
+            h = self.y
+        if y == 1:
+            h=len(self.d)+1
+        else:
+            h=y
+        scr.addstr(h, w, f"{'':{w}}", self.colors(4))
+        scr.addstr(h, w, line, self.colors(n))
 
     def insert_mode(self, scr, item=''):
         "docstring of method enter_item"
@@ -110,11 +116,13 @@ class Todolist:
                 item += key
             # }}}----------------------------------------------------------------------------------
 
+        # add item to self.d
         if len(self.d) == self.y-1:
             self.d[item] = False
+        # replace item
         else:
-            olditem = list(self.d)[self.y-1]
-            self.d[item] = self.d.pop(olditem)
+            oldkey = list(self.d)[self.y-1]
+            self.d[item] = self.d.pop(oldkey)
 
 
     def press_arrow(self, key):
