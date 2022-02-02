@@ -29,18 +29,21 @@ class Todolist:
                 # True         or           False
                 n = 2 if self.d[item] else 1
                 line = f'{i+1}) {item} | {str(self.d[item]):5}'
-                scr.addstr(i, w, f"{line}", self.colors(n))
+                scr.addstr(i, w, f"{line:{w}}", self.colors(n))
             # }}}----------------------------------------------------------------------------------
 
             # display selected item
             # {{{----------------------------------------------------------------------------------
             if len(self.d) > self.y:
-                line = f"{str(self.y+1)+ ')' + list(self.d)[self.y]}"
+                line = f"{str(self.y+1)+ ')' + repr(list(self.d)[self.y])}"
             else:
                 line = f"{self.y+1})"
-            self.clrdis_line(scr, line, 3)
-            self.clrdis_line(scr, "[d]elete [number]", y=1)
+            #scr.addstr(self.y, w, f"{line:{w}}")
+            self.clrdis_line(scr, f"{line:{w}}", h=self.y)
+            self.clrdis_line(scr, "[d]elete [number]", h=len(self.d)+1)
             # }}}----------------------------------------------------------------------------------
+
+
 
             # press arrow 
             # {{{----------------------------------------------------------------------------------
@@ -49,7 +52,6 @@ class Todolist:
                 # line 88
                 self.press_arrow(pressed_key)
             # }}}
-
             # press enter
             # {{{----------------------------------------------------------------------------------
             elif pressed_key == '\n':
@@ -60,7 +62,6 @@ class Todolist:
                     k = list(self.d)[self.y]
                     self.d[k] = not self.d[k]
             # }}}----------------------------------------------------------------------------------
-
             # press a letter
             # {{{-------------------------------------------------------------------------------
             elif pressed_key in self.a_z:
@@ -74,17 +75,11 @@ class Todolist:
             
             # display options
 
-            scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y}")
+            scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y+1}")
 
 
-    def clrdis_line(self, scr, line, n=1, y=0):
+    def clrdis_line(self, scr, line, n=1, h=0):
         w = (scr.getmaxyx()[1]//9)*2
-        if y == 0:
-            h = self.y
-        if y == 1:
-            h=len(self.d)+1
-        else:
-            h=y
         scr.addstr(h, w, f"{'':{w}}", self.colors(4))
         scr.addstr(h, w, line, self.colors(n))
 
@@ -93,7 +88,11 @@ class Todolist:
         
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
         while True:
-            self.clrdis_line(scr, f'{self.y+1}) {item}')
+            w = (scr.getmaxyx()[1]//9)*2
+            line = f'{self.y+1}) {repr(item)}'
+            self.clrdis_line(scr, f'{line}', h=self.y)
+
+
             key = scr.getkey()
             # press backspace
             # {{{----------------------------------------------------------------------------------
@@ -116,6 +115,8 @@ class Todolist:
                 item += key
             # }}}----------------------------------------------------------------------------------
 
+        # exit insert mode
+        # {{{--------------------------------------------------------------------------------------
         # add item to self.d
         if len(self.d) == self.y-1:
             self.d[item] = False
@@ -123,6 +124,7 @@ class Todolist:
         else:
             oldkey = list(self.d)[self.y-1]
             self.d[item] = self.d.pop(oldkey)
+        # }}}--------------------------------------------------------------------------------------
 
 
     def press_arrow(self, key):
