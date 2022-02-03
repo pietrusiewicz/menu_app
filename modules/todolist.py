@@ -31,7 +31,7 @@ class Todolist:
                 self.clrdis_line(scr, line, n=n,h=i)
                 scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y+1}")
                 # display options
-                self.clrdis_line(scr, "[d]elete [number]", h=len(self.d)+1) # }}}
+                self.clrdis_line(scr, "[d]elete", h=len(self.d)+1) # }}}
 
             # display selected item
             if len(self.d) > self.y: #{{{
@@ -47,7 +47,7 @@ class Todolist:
             # press arrow 
             if pressed_key in ('KEY_UP', 'KEY_DOWN', 'KEY_LEFT', 'KEY_RIGHT'): # {{{
                 # line 88
-                self.press_arrow(pressed_key) # }}}
+                self.press_an_arrow(pressed_key) # }}}
             # press enter
             elif pressed_key == '\n': # {{{
                 if len(self.d) == 0:
@@ -62,12 +62,21 @@ class Todolist:
             # }}}----------------------------------------------------------------------------------
 
     # press a letter
-    def press_letter(self, scr, pressed_key): # {{{------------------------------------------------
-        if len(self.d) == self.y:
+    def press_letter(self, scr, pressed_key): # {{{
+        if pressed_key == 'd':
+            oldkey = list(self.d)[self.y-1]
+            self.clrdis_line(scr, f"Are you sure to delete {repr(oldkey)} y/n", h=len(self.d)+1)
+            key = scr.getkey().lower()
+            if key == 'y':
+                self.clrdis_line(scr, "", h=len(self.d)+1)
+                self.d.pop(oldkey)
+            self.clrdis_line(scr, "[d]elete", h=len(self.d)+1)
+            
+        elif len(self.d) == self.y:
             # pressed_key is first letter
             self.insert_mode(scr, pressed_key)
         else:
-            self.insert_mode(scr, list(self.d)[self.y]+pressed_key) # }}}--------------------------
+            self.insert_mode(scr, list(self.d)[self.y]+pressed_key) # }}}
 
     # clear and display line
     def clrdis_line(self, scr, line, n=1, h=0): # {{{----------------------------------------------
@@ -75,6 +84,7 @@ class Todolist:
         scr.addstr(h, w, f"{'':{scr.getmaxyx()[1]-w}}", self.colors(4))
         scr.addstr(h, w, line, self.colors(n)) # }}}-----------------------------------------------
 
+    # insert mode
     def insert_mode(self, scr, item=''): # {{{
         "docstring of method enter_item"
         
@@ -112,6 +122,7 @@ class Todolist:
             self.d[item] = self.d.pop(oldkey) # }}}------------------------------------------------
     # }}}------------------------------------------------------------------------------------------
 
+    # press an arrow
     def press_an_arrow(self, key): # {{{
         "docstring press arrow"
         if key == 'KEY_UP':
