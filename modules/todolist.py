@@ -14,18 +14,21 @@ class Todolist:
         self.main(scr)
         # }}}--------------------------------------------------------------------------------------
 
+    # main loop
+    # {{{
     def main(self, scr):
         "docstring of method"
-
+        # colors in program
         self.program_colors(scr)
         line = ""
+    # }}}
         while True:
 
             # display list of items
             w = (scr.getmaxyx()[1]//9)*2  # {{{
             for i in range(len(self.d)): 
                 item = list(self.d)[i]
-                # True         or           False
+                # True         or        False
                 n = 2 if self.d[item] else 1
                 line = f'{i+1}) {item} | {str(self.d[item]):5}'
                 self.clrdis_line(scr, line, n=n,h=i)
@@ -34,11 +37,11 @@ class Todolist:
                 self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
 
             # display selected item
-            if len(self.d) > self.y: #{{{
+            if len(self.d) > self.y: # {{{
                 line = f"{str(self.y+1)+ ')' + repr(list(self.d)[self.y])}"
             else:
                 line = f"{self.y+1})"
-            self.clrdis_line(scr, line, h=self.y) # }}}
+            self.clrdis_line(scr, line, h=self.y, underline=True) # }}}
 
 
             # press a key
@@ -66,6 +69,7 @@ class Todolist:
 
     # press a letter
     def press_letter(self, scr, pressed_key): # {{{
+
         # delete item
         if pressed_key == 'd': # {{{
             oldkey = list(self.d)[self.y-1]
@@ -82,6 +86,7 @@ class Todolist:
         # edit new item
         if pressed_key == 'e': # {{{
             self.insert_mode(scr, list(self.d)[self.y]) # }}}
+
         # add new item
         elif len(self.d) == self.y: # {{{
             # pressed_key is first letter
@@ -89,10 +94,13 @@ class Todolist:
     # }}}
 
     # clear and display line
-    def clrdis_line(self, scr, line, n=1, h=0): # {{{----------------------------------------------
+    def clrdis_line(self, scr, line, n=1, h=0, underline=False): # {{{
         w = (scr.getmaxyx()[1]//9)*2
-        scr.addstr(h, w, f"{'':{scr.getmaxyx()[1]-w}}", self.colors(4))
-        scr.addstr(h, w, line, self.colors(n)) # }}}-----------------------------------------------
+        scr.addstr(h, w, f"{'':{scr.getmaxyx()[1]-w}}", self.colors(n))
+        if underline:
+            statusbar = (curses.A_UNDERLINE | curses.color_pair(n))
+            scr.addstr(h, w, line, statusbar)
+        scr.addstr(h, w, line, self.colors(n)) # }}}
 
     # insert mode
     def insert_mode(self, scr, item=''): # {{{
@@ -152,6 +160,7 @@ class Todolist:
         curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLACK)
         curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_GREEN)
         curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        #curses.init_pair(7, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     # }}}------------------------------------------------------------------------------------------
 
 curses.wrapper(Todolist)

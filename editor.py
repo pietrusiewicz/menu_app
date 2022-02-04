@@ -1,11 +1,10 @@
 import curses
 
-scr = curses.initscr()
-y = 0
-l,word = [], ''
+def main(scr):
+    curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+    #curses.start_color()
+    statusbar = (curses.A_UNDERLINE | curses.color_pair(1))
+    scr.addstr('kowno', statusbar)
+    scr.getkey()
 
-for i,j in enumerate(range(10)):
-    scr.addstr(i, 0, str(i))
-scr.refresh()
-curses.napms(3000)
-curses.endwin()
+curses.wrapper(main)
