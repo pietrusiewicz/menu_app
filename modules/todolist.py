@@ -31,7 +31,7 @@ class Todolist:
                 self.clrdis_line(scr, line, n=n,h=i)
                 scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y+1}")
                 # display options
-                self.clrdis_line(scr, "[d]elete", h=len(self.d)+1) # }}}
+                self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
 
             # display selected item
             if len(self.d) > self.y: #{{{
@@ -44,10 +44,12 @@ class Todolist:
             # press a key
             # {{{----------------------------------------------------------------------------------
             pressed_key = scr.getkey()
+
             # press arrow 
             if pressed_key in ('KEY_UP', 'KEY_DOWN', 'KEY_LEFT', 'KEY_RIGHT'): # {{{
                 # line 88
                 self.press_an_arrow(pressed_key) # }}}
+
             # press enter
             elif pressed_key == '\n': # {{{
                 if len(self.d) == 0:
@@ -56,6 +58,7 @@ class Todolist:
                     # self.y = 1 gdy list(self.d) = [' '] index 0
                     k = list(self.d)[self.y]
                     self.d[k] = not self.d[k] # }}}
+
             # press a letter
             elif pressed_key in self.a_z: # {{{
                 self.press_letter(scr,pressed_key) # }}}
@@ -63,20 +66,27 @@ class Todolist:
 
     # press a letter
     def press_letter(self, scr, pressed_key): # {{{
-        if pressed_key == 'd':
+        # delete item
+        if pressed_key == 'd': # {{{
             oldkey = list(self.d)[self.y-1]
             self.clrdis_line(scr, f"Are you sure to delete {repr(oldkey)} y/n", h=len(self.d)+1)
-            key = scr.getkey().lower()
-            if key == 'y':
-                self.clrdis_line(scr, "", h=len(self.d)+1)
-                self.d.pop(oldkey)
-            self.clrdis_line(scr, "[d]elete", h=len(self.d)+1)
-            
-        elif len(self.d) == self.y:
+            while True:
+                key = scr.getkey().lower()
+                if key == 'y':
+                    self.clrdis_line(scr, "", h=len(self.d)+1)
+                    self.d.pop(oldkey)
+                elif key == 'n':
+                    break
+            self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
+
+        # edit new item
+        if pressed_key == 'e': # {{{
+            self.insert_mode(scr, list(self.d)[self.y]) # }}}
+        # add new item
+        elif len(self.d) == self.y: # {{{
             # pressed_key is first letter
-            self.insert_mode(scr, pressed_key)
-        else:
-            self.insert_mode(scr, list(self.d)[self.y]+pressed_key) # }}}
+            self.insert_mode(scr, pressed_key) # }}}
+    # }}}
 
     # clear and display line
     def clrdis_line(self, scr, line, n=1, h=0): # {{{----------------------------------------------
