@@ -5,22 +5,18 @@ class Todolist:
     "docstring of class"
 
 
-    def __init__(self, scr):
-        # declaring program variables
-        # {{{
+    # declaring program variables 
+    def __init__(self, scr): # {{{
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
-        self.main(scr)
-        # }}}--------------------------------------------------------------------------------------
+        self.main(scr) # }}}
 
     # main loop
-    # {{{
-    def main(self, scr):
+    def main(self, scr): # {{{
         "docstring of method"
         # colors in program
         self.program_colors(scr)
-        line = ""
-    # }}}
+        line = "" # }}}
         while True:
 
             # display list of items
@@ -38,8 +34,8 @@ class Todolist:
             self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
 
             # display selected item
-            selected_is_true = False
-            if self.y in range(len(self.d)): # {{{
+            selected_is_true = False # {{{
+            if self.y in range(len(self.d)):
                 line = f"{str(self.y+1)+ ')' + list(self.d)[self.y]}"
                 selected_is_true = self.d[list(self.d)[self.y]]
             else:
