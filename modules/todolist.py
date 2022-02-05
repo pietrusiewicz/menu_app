@@ -10,7 +10,6 @@ class Todolist:
         # {{{
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
-        self.statusbar = lambda n, underline=False: (curses.color_pair(n) | curses.A_UNDERLINE) if underline else curses.color_pair(n)
         self.main(scr)
         # }}}--------------------------------------------------------------------------------------
 
@@ -34,16 +33,19 @@ class Todolist:
                 self.clrdis_line(scr, line, n=n,h=i)
                 scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y+1}")
             # display last line
-            self.clrdis_line(scr, f"{len(self.d)+1})", h=len(self.d))
+            self.clrdis_line(scr, f"+)", h=len(self.d))
             # display options
             self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
 
             # display selected item
+            selected_is_true = False
             if self.y in range(len(self.d)): # {{{
                 line = f"{str(self.y+1)+ ')' + list(self.d)[self.y]}"
+                selected_is_true = self.d[list(self.d)[self.y]]
             else:
-                line = f"{self.y+1})"
-            self.clrdis_line(scr, line, h=self.y, underline=True) # }}}
+                line = f"+)"
+                #line = f"{self.y+1})"
+            self.clrdis_line(scr, line, n=5+selected_is_true,h=self.y) # }}}
 
 
             # press a key
@@ -96,11 +98,11 @@ class Todolist:
     # }}}
 
     # clear and display line
-    def clrdis_line(self, scr, line, n=1, h=0, underline=False): # {{{
+    def clrdis_line(self, scr, line, n=1, h=0): # {{{
         w = (scr.getmaxyx()[1]//9)*2
         scr.addstr(h, w, f"{'':{scr.getmaxyx()[1]-w}}", curses.color_pair(n))
-        #statusbar = (curses.color_pair(n) | curses.A_UNDERLINE) if underline else curses.color_pair(n)
-        scr.addstr(h, w, f"{line}", self.statusbar(n, underline)) # }}}
+        #statusbar = (curses.color_pair(n) | curses.A_UNDERLINE)
+        scr.addstr(h, w, f"{line}", curses.color_pair(n)) # }}}
 
     # insert mode
     def insert_mode(self, scr, item=''): # {{{
@@ -109,8 +111,8 @@ class Todolist:
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
 
         w = (scr.getmaxyx()[1]//9)*2
-        line = f'{self.y+1}) {repr(item)}'
-        self.clrdis_line(scr, f'{line}', h=self.y,underline=True)
+        line = f'{self.y+1}){item}'
+        self.clrdis_line(scr, f'{line}', h=self.y)
 
 
         key = scr.getkey()
@@ -125,8 +127,10 @@ class Todolist:
         elif key in '\n': # {{{
             if item in list(self.d):
                 scr.addstr(len(self.d)+1, 0, f'{repr(item)} juz istnieje')
+
+            # exit insert mode 
             else:
-                # exit insert mode {{{
+                # create item
                 if len(self.d) == self.y:
                     self.d[item] = False
                 # replace item
@@ -135,19 +139,16 @@ class Todolist:
                     self.d[item] = self.d.pop(oldkey) 
                 self.y += 1
                 scr.addstr(scr.getmaxyx()[0]-1, 0, "SELECT")
-            # }}}
         # }}}
     # }}}------------------------------------------------------------------------------------------
 
     # press an arrow
     def press_an_arrow(self, key): # {{{
         "docstring press arrow"
-        if key == 'KEY_UP':
-            if self.y > 0:
-                self.y -= 1
-        if key == 'KEY_DOWN':
-            if self.y < len(self.d):
-                self.y += 1
+        if key == 'KEY_UP' and self.y > 0:
+            self.y -= 1
+        if key == 'KEY_DOWN' and self.y < len(self.d):
+            self.y += 1
     # }}}------------------------------------------------------------------------------------------
 
     # colors in program
@@ -157,9 +158,9 @@ class Todolist:
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
         curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLACK)
-        curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_GREEN)
-        curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_WHITE)
-        #curses.init_pair(7, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+        curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_YELLOW)
+        curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
+        curses.init_pair(7, curses.COLOR_BLACK, curses.COLOR_WHITE)
     # }}}------------------------------------------------------------------------------------------
 
 curses.wrapper(Todolist)
