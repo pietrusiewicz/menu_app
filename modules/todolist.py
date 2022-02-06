@@ -16,7 +16,7 @@ class Todolist:
         "docstring of method"
         # colors in program
         self.program_colors(scr)
-        line = "" # }}}
+        line = ""
         while True:
 
             # display list of items
@@ -31,7 +31,11 @@ class Todolist:
             # display last line
             self.clrdis_line(scr, f"+)", h=len(self.d))
             # display options
-            self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
+            if self.y == len(self.d):
+                self.clrdis_line(scr, "write to start edit a new item", h=len(self.d)+1)
+
+            else:
+                self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
 
             # display selected item
             selected_is_true = False # {{{
@@ -65,6 +69,7 @@ class Todolist:
             elif pressed_key.lower() in self.a_z: # {{{
                 self.press_letter(scr,pressed_key.lower()) # }}}
             # }}}----------------------------------------------------------------------------------
+        # }}} 
 
     # press a letter
     def press_letter(self, scr, pressed_key): # {{{
@@ -86,6 +91,10 @@ class Todolist:
             # edit an item
             elif pressed_key == 'e': # {{{
                 self.insert_mode(scr, list(self.d)[self.y]) # }}}
+
+            # clear an item
+            #elif pressed_key == 'e': # {{{
+              #  self.insert_mode(scr, list(self.d)[self.y]) # }}}
         # }}}--------------------------------------------------------------------------------------
         # add new item
         elif len(self.d) == self.y: # {{{
@@ -105,6 +114,7 @@ class Todolist:
         "docstring of method enter_item"
         
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
+        self.clrdis_line(scr, "press enter to end edit an item", h=len(self.d)+1)
 
         w = (scr.getmaxyx()[1]//9)*2
         line = f'{self.y+1}){item}'
