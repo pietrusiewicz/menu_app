@@ -1,5 +1,6 @@
 import curses
 import time
+import sys
 
 class Todolist:
     "docstring of class"
@@ -9,7 +10,7 @@ class Todolist:
     def __init__(self, scr): # {{{
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
-        self.main(scr) # }}}
+        #self.main(scr) # }}}
 
     # main loop
     def main(self, scr): # {{{
@@ -20,22 +21,22 @@ class Todolist:
         while True:
 
             # display list of items
-            w = (scr.getmaxyx()[1]//9)*2  # {{{
-            for i in range(len(self.d)): 
+            for i in range(len(self.d)): # {{{
                 item = list(self.d)[i]
                 # True         or        False
                 n = 2 if self.d[item] else 1
                 line = f'{i+1}) {item} | {str(self.d[item]):5}'
                 self.clrdis_line(scr, line, n=n,h=i)
                 scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y+1}")
+
             # display last line
             self.clrdis_line(scr, f"+)", h=len(self.d))
             # display options
             if self.y == len(self.d):
-                self.clrdis_line(scr, "write to start edit a new item", h=len(self.d)+1)
+                self.clrdis_line(scr, "press LETTER KEY to start write", h=len(self.d)+1)
 
             else:
-                self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
+                self.clrdis_line(scr, "[d]elete [e]dit [c]lear", h=len(self.d)+1) # }}}
 
             # display selected item
             selected_is_true = False # {{{
@@ -69,10 +70,12 @@ class Todolist:
             elif pressed_key.lower() in self.a_z: # {{{
                 self.press_letter(scr,pressed_key.lower()) # }}}
             # }}}----------------------------------------------------------------------------------
+
         # }}} 
 
     # press a letter
     def press_letter(self, scr, pressed_key): # {{{
+
         # press an letter
         # keybinds {{{-----------------------------------------------------------------------------
         if self.y in range(len(self.d)):
@@ -86,16 +89,18 @@ class Todolist:
                 if key == 'y':
                     self.clrdis_line(scr, "", h=len(self.d)+1)
                     self.d.pop(to_remove)
-                self.clrdis_line(scr, "[d]elete [e]dit", h=len(self.d)+1) # }}}
+                self.clrdis_line(scr, "[d]elete [e]dit [c]lear", h=len(self.d)+1) # }}}
 
             # edit an item
             elif pressed_key == 'e': # {{{
                 self.insert_mode(scr, list(self.d)[self.y]) # }}}
 
             # clear an item
-            #elif pressed_key == 'e': # {{{
-              #  self.insert_mode(scr, list(self.d)[self.y]) # }}}
+            elif pressed_key == 'c': # {{{
+                self.insert_mode(scr) # }}}
+
         # }}}--------------------------------------------------------------------------------------
+
         # add new item
         elif len(self.d) == self.y: # {{{
             # pressed_key is first letter
@@ -114,10 +119,10 @@ class Todolist:
         "docstring of method enter_item"
         
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
-        self.clrdis_line(scr, "press enter to end edit an item", h=len(self.d)+1)
 
         w = (scr.getmaxyx()[1]//9)*2
         line = f'{self.y+1}){item}'
+        self.clrdis_line(scr, "press ENTER to end edit an item", h=len(self.d)+1)
         self.clrdis_line(scr, f'{line}', h=self.y)
 
 
@@ -155,6 +160,8 @@ class Todolist:
             self.y -= 1
         if key == 'KEY_DOWN' and self.y < len(self.d):
             self.y += 1
+        if key == 'KEY_LEFT':
+            sys.exit()
     # }}}------------------------------------------------------------------------------------------
 
     # colors in program
