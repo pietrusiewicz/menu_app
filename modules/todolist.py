@@ -17,8 +17,8 @@ class Todolist:
         "docstring of method"
         # colors in program
         self.program_colors(scr)
-        line = ""
-        while True:
+        line, self.program = "", True
+        while self.program:
 
             # display list of items
             for i in range(len(self.d)): # {{{
@@ -161,7 +161,7 @@ class Todolist:
         if key == 'KEY_DOWN' and self.y < len(self.d):
             self.y += 1
         if key == 'KEY_LEFT':
-            sys.exit()
+            self.program=False
     # }}}------------------------------------------------------------------------------------------
 
     # colors in program

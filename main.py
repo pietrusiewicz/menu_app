@@ -27,7 +27,8 @@ class Menu:
                     self.y -= 1
                 if key == "KEY_DOWN" and self.y+1<len(self.apps):
                     self.y += 1
-            if key == '\n':
+            if key in ('\n', "KEY_RIGHT"):
+
                 if self.y==0:
                     t = Todolist(scr)
                     t.main(scr)
