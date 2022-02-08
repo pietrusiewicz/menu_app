@@ -83,6 +83,7 @@ class Todolist:
             if pressed_key == 'd': # {{{
                 to_remove = list(self.d)[self.y]
                 self.clrdis_line(scr, f"Are you sure to delete {repr(to_remove)} y/n", h=len(self.d)+1)
+
                 key = scr.getkey().lower()
                 if key not in 'yn':
                     self.press_letter(scr, 'd')
