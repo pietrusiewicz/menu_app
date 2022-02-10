@@ -28,17 +28,9 @@ class Snake:
             hw = scr.getmaxyx()
             self.press_an_arrow(scr,key,hw)
 
-
-    def make_fruit(self, scr, hw):
-        scr.addstr(self.xy[1], self.xy[0], ' ', curses.color_pair(1))
-        #self.snake.append(self.xy)
-        h,w = [int(_*random.random()) for _ in hw]
-        self.fruit = [w,h]
-        scr.addstr(h, w, '0', curses.color_pair(2))
-
     def make_full_snake(self,scr):
-        #for x,y in self.snake:
-            #scr.addstr(y, x, ' ',curses.color_pair(1))
+        for x,y in self.snake:
+            scr.addstr(y, x, ' ', curses.color_pair(1))
         scr.addstr(self.fruit[1], self.fruit[0], '0', curses.color_pair(2))
         scr.addstr(self.xy[1], self.xy[0], '',curses.color_pair(1))
             #scr.addstr(10,0, f"{x} {y}")
@@ -49,6 +41,17 @@ class Snake:
             for x in range(w-1):
                 scr.addstr(y, x, ' ')
 
+    # eat a fruit
+    def eat_fruit(self):
+        self.snake.append(self.xy)
+
+    # make a fruit
+    def make_fruit(self, scr, hw): #{{{
+        #scr.addstr(self.xy[1], self.xy[0], ' ', curses.color_pair(1))
+        #self.snake.append(self.xy)
+        h,w = [int(_*random.random()) for _ in hw]
+        self.fruit = [w,h]
+        scr.addstr(h, w, '0', curses.color_pair(2)) #}}}
 
     # press an arrow
     def press_an_arrow(self,scr, key, hw): # {{{
@@ -78,7 +81,9 @@ class Snake:
             scr.addstr(h-1,8, str(self.fruit))
 
         if self.xy == self.fruit:
+            self.eat_fruit()
             self.make_fruit(scr, hw)
 
         # }}}
+
 wrapper(Snake)
