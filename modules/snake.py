@@ -1,5 +1,6 @@
 import curses
 import random
+import time
 
 class Snake:
     def __init__(self, scr):
@@ -11,6 +12,7 @@ class Snake:
         self.main(scr)
 
     def main(self, scr):
+        now = time.time()
         curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_GREEN)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_YELLOW)
         self.create_fruit(scr)
@@ -20,7 +22,7 @@ class Snake:
             if self.press_key(scr, key):
                 continue
             if self.xy in self.snake and self.moves > 3:
-                self.end_screen(scr)
+                self.end_screen(scr, now)
             if self.xy == self.fruit:
                 self.snake.append([int(self.xy[0]), int(self.xy[1])])
                 self.create_fruit(scr)
@@ -32,34 +34,30 @@ class Snake:
         h,w = scr.getmaxyx()
         if key == '\n':
             self.game = False
-        elif key == 'KEY_UP':
-            if self.direction != 's':
-                if self.xy[1] > 0:
-                    self.xy[1] -= 1
-                else:
-                    self.xy[1] = h-2
-                self.direction = 'n'
-        elif key == 'KEY_DOWN'
-            if self.direction != 'n':
-                if self.xy[1] < h-2:
-                    self.xy[1] += 1
-                else:
-                    self.xy[1] = 0
-                self.direction = 's'
-        elif key == 'KEY_LEFT'
-            if self.direction != 'e':
-                if self.xy[0] > 0:
-                    self.xy[0] -= 1
-                else:
-                    self.xy[0] = w-1
-                self.direction = 'w'
-        elif key == 'KEY_RIGHT'
-            if self.direction != 'w':
-                if self.xy[0] < w-1:
-                    self.xy[0] += 1
-                else:
-                    self.xy[0] = 0
-                self.direction = 'e' 
+        elif key == 'KEY_UP' and self.direction != 's':
+            if self.xy[1] > 0:
+                self.xy[1] -= 1
+            else:
+                self.xy[1] = h-2
+            self.direction = 'n'
+        elif key == 'KEY_DOWN' and self.direction != 'n':
+            if self.xy[1] < h-2:
+                self.xy[1] += 1
+            else:
+                self.xy[1] = 0
+            self.direction = 's'
+        elif key == 'KEY_LEFT' and self.direction != 'e':
+            if self.xy[0] > 0:
+                self.xy[0] -= 1
+            else:
+                self.xy[0] = w-1
+            self.direction = 'w'
+        elif key == 'KEY_RIGHT' and self.direction != 'w':
+            if self.xy[0] < w-1:
+                self.xy[0] += 1
+            else:
+                self.xy[0] = 0
+            self.direction = 'e' 
         else:
             self.moves -= 1
             key = ' '
@@ -68,7 +66,7 @@ class Snake:
         # }}}
 
     def create_fruit(self, scr):
-        h,w = [int((_-2)*random.random()) for _ in scr.getmaxyx()]
+        h,w = [int((_-1)*random.random()) for _ in scr.getmaxyx()]
         self.fruit = [w,h]
         scr.addstr(h, w, "0", curses.color_pair(2))
 
@@ -92,10 +90,10 @@ class Snake:
         self.snake = self.snake[1:]; 
         self.snake.append([self.xy[0], self.xy[1]])
 
-    def end_screen(self, scr):
+    def end_screen(self, scr, start_time):
         h,w = [_//2 for _ in scr.getmaxyx()]
         self.game=False
-        text = f"You lose with {len(self.snake)} points on {self.moves} moves"
+        text = f"You lose with {len(self.snake)} points on {self.moves} moves in {int(time.time())-int(start_time)}s"
         scr.addstr(h,w-len(text)//2,text)
         scr.getkey()
         
