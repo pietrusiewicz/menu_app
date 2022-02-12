@@ -17,6 +17,7 @@ class Snake:
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_YELLOW)
         self.create_fruit(scr)
         while self.game:
+            scr.addstr(self.xy[1], self.xy[0], '')
             self.moves += 1
             key = scr.getkey()
             if self.press_key(scr, key):
@@ -27,7 +28,6 @@ class Snake:
                 self.snake.append([int(self.xy[0]), int(self.xy[1])])
                 self.create_fruit(scr)
             self.display_board(scr)
-            scr.addstr(self.xy[1], self.xy[0], '')
 
     # press key
     def press_key(self, scr, key): # {{{
@@ -95,6 +95,9 @@ class Snake:
         self.game=False
         text = f"You lose with {len(self.snake)} points on {self.moves} moves in {int(time.time())-int(start_time)}s"
         scr.addstr(h,w-len(text)//2,text)
-        scr.getkey()
+        scr.addstr(h+1,w-len(text)//2,"press enter to exit")
+        while True:
+            if scr.getkey() == '\n':
+                break
         
 curses.wrapper(Snake)
