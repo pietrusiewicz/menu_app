@@ -4,6 +4,7 @@ import time
 
 class Snake:
     def __init__(self, scr):
+        self.start_time = time.time()
         h,w = [_//2 for _ in scr.getmaxyx()]
         self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
         self.xy, self.fruit = [w, h],[0,0]
@@ -12,7 +13,6 @@ class Snake:
         self.main(scr)
 
     def main(self, scr):
-        now = time.time()
         curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_GREEN)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_YELLOW)
         self.create_fruit(scr)
@@ -23,7 +23,7 @@ class Snake:
             if self.press_key(scr, key):
                 continue
             if self.xy in self.snake and self.moves > 3:
-                self.end_screen(scr, now)
+                self.end_screen(scr)
             if self.xy == self.fruit:
                 self.snake.append([int(self.xy[0]), int(self.xy[1])])
                 self.create_fruit(scr)
@@ -77,7 +77,7 @@ class Snake:
         scr.addstr(self.fruit[1], self.fruit[0], '0', curses.color_pair(2))
         for x,y in self.snake:
             scr.addstr(y,x,'=', curses.color_pair(1))
-        scr.addstr(h-1,0, f"{len(self.snake)}, {self.fruit}, {self.direction} ", curses.color_pair(2))
+        scr.addstr(h-1,0, f"{len(self.snake)}, {self.fruit}, {self.direction}, {self.difference_seconds()}", curses.color_pair(2))
         scr.addstr(self.xy[1], self.xy[0], '', curses.color_pair(1))
 
     def clear_board(self, scr):
@@ -90,14 +90,17 @@ class Snake:
         self.snake = self.snake[1:]; 
         self.snake.append([self.xy[0], self.xy[1]])
 
-    def end_screen(self, scr, start_time):
+    def end_screen(self, scr):
         h,w = [_//2 for _ in scr.getmaxyx()]
         self.game=False
-        text = f"You lose with {len(self.snake)} points on {self.moves} moves in {int(time.time())-int(start_time)}s"
+        text = f"You lose with {len(self.snake)} points on {self.moves} moves in {self.difference_seconds()}s"
         scr.addstr(h,w-len(text)//2,text)
         scr.addstr(h+1,w-len(text)//2,"press enter to exit")
         while True:
             if scr.getkey() == '\n':
                 break
-        
+
+    def difference_seconds(self):
+        return int(time.time())-int(self.start_time)
+
 curses.wrapper(Snake)
