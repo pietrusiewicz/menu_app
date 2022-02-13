@@ -13,8 +13,8 @@ class Snake:
         self.main(scr)
 
     def main(self, scr):
-        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_GREEN)
-        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_YELLOW)
+        curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_GREEN)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)
         self.create_fruit(scr)
         while self.game:
             scr.addstr(self.xy[1], self.xy[0], '')
@@ -66,7 +66,11 @@ class Snake:
         # }}}
 
     def create_fruit(self, scr):
-        h,w = [int((_-1)*random.random()) for _ in scr.getmaxyx()]
+        while True:
+            h,w = [int((_-1)*random.random()) for _ in scr.getmaxyx()]
+            check = [[_[0]==w,_[1]==h] for _ in self.snake]
+            if [True, True] not in check:
+                break
         self.fruit = [w,h]
         scr.addstr(h, w, "0", curses.color_pair(2))
 
@@ -103,4 +107,4 @@ class Snake:
     def difference_seconds(self):
         return int(time.time())-int(self.start_time)
 
-curses.wrapper(Snake)
+#curses.wrapper(Snake)

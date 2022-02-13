@@ -1,10 +1,11 @@
 import curses
 import sys
 from modules.todolist import Todolist
+from modules.snake import Snake
 
 class Menu:
     def __init__(self, scr):
-        self.apps = ['todolist', 'blog', 'pdf_reader', 'end']
+        self.apps = ['todolist', 'blog', 'pdf_reader','snake', 'end']
         self.y = 0
         self.main(scr)
     
@@ -33,6 +34,9 @@ class Menu:
                     t = Todolist(scr)
                     t.main(scr)
                 if self.y==3:
+                    s = Snake(scr)
+                    #s.main(scr)
+                if self.y==4:
                     curses.endwin()
                     sys.exit()
             #scr.addstr(15, 15, f'{self.apps[self.y]} {self.y}')
