@@ -1,72 +1,40 @@
 import curses
-import curses.textpad
-import random
+from curses.textpad import Textbox, rectangle
 
-class Snake:
-    def __init__(self, scr):
-        h,w = [_//2 for _ in scr.getmaxyx()]
-        self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
-        self.xy, self.fruit = [w, h],[0,0]
-        self.main(scr)
+def main1(scr):
+    scr.addstr(0,0, "Enter IM message: (hit c-G to send)")
+    
+    win = curses.newwin(5,30, 2,1)
+    rectangle(scr, 1,0,1+5+1, 1+30+1)
+    scr.refresh()
 
-    def main(self, scr):
-        curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_GREEN)
-        curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_YELLOW)
-        self.create_fruit(scr)
-        moves=0
-        while self.game:
-            moves += 1
-            key = scr.getkey()
-            self.press_key(scr, key)
-            if self.xy in self.snake and moves > 3:
-                break
-            scr.addstr(self.xy[1], self.xy[0], '')
-            if self.xy == self.fruit:
-                self.snake.append([int(self.xy[0]), int(self.xy[1])])
-                self.create_fruit(scr)
-            self.clear_and_display_board(scr)
+    box = Textbox(win)
 
-    def press_key(self, scr, key):
-        h,w = scr.getmaxyx()
-        if key == 'KEY_UP':
-            if self.xy[1] > 0:
-                self.xy[1] -= 1
-            else:
-                self.xy[1] = h-2
-        if key == 'KEY_DOWN':
-            if self.xy[1] < h-2:
-                self.xy[1] += 1
-            else:
-                self.xy[1] = 0
-        if key == 'KEY_LEFT':
-            if self.xy[0] > 0:
-                self.xy[0] -= 1
-            else:
-                self.xy[0] = w-1
-        if key == 'KEY_RIGHT':
-            if self.xy[0] < w-1:
-                self.xy[0] += 1
-            else:
-                self.xy[0] = 0
+    # let the user edit untilc c-G is struck
+    box.edit()
+
+    # Get resulting contents
+    return box.gather()
+
+def main2(scr):
+    scr.addstr(0,0,"ąęćół")
+    x,y = 30,5
+    win = curses.newwin(y,x, 2,1)
+    rectangle(scr, 1,0,1+y+1, 1+x+1)
+    scr.refresh()
+    box = Textbox(win, True)
+    box.edit()
+    return box.gather()
+
+def main3(scr):
+    word = ""
+    while True:
+        key = chr(scr.getch())
         if key == '\n':
-            self.game = False
-
-    def create_fruit(self, scr):
-        h,w = [int((_-1)*random.random()) for _ in scr.getmaxyx()]
-        self.fruit = [w,h]
-        scr.addstr(h, w, "0", curses.color_pair(2))
-
-    def clear_and_display_board(self, scr):
-        h,w = scr.getmaxyx()
-        self.snake = self.snake[1:];self.snake.append([self.xy[0], self.xy[1]])
-        for y in range(h-1):
-            for x in range(w):
-                scr.addstr(y, x, " ")
-        scr.addstr(self.fruit[1], self.fruit[0], '0', curses.color_pair(2))
-        for x,y in self.snake:
-            scr.addstr(y,x,'=', curses.color_pair(1))
-        scr.addstr(h-1,0, f"{len(self.snake)}, {self.fruit}", curses.color_pair(2))
-        scr.addstr(self.xy[1], self.xy[0], '', curses.color_pair(1))
-
-        
-curses.wrapper(Snake)
+            break
+        else:
+            word += key
+        scr.addstr(0,0,word)
+    return word
+kowno = curses.wrapper(main3)
+print(kowno)

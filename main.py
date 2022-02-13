@@ -31,10 +31,12 @@ class Menu:
             if key in ('\n', "KEY_RIGHT"):
 
                 if self.y==0:
-                    t = Todolist(scr)
-                    t.main(scr)
+                    #t = Todolist(scr)
+                    Todolist(scr)
+                    #t.main(scr)
                 if self.y==3:
-                    s = Snake(scr)
+                    #s = Snake(scr)
+                    Snake(scr)
                     #s.main(scr)
                 if self.y==4:
                     curses.endwin()

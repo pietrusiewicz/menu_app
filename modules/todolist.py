@@ -10,7 +10,7 @@ class Todolist:
     def __init__(self, scr): # {{{
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
-        #self.main(scr) # }}}
+        self.main(scr) # }}}
 
     # main loop
     def main(self, scr): # {{{
@@ -177,5 +177,5 @@ class Todolist:
         curses.init_pair(7, curses.COLOR_BLACK, curses.COLOR_WHITE)
     # }}}------------------------------------------------------------------------------------------
 
-curses.wrapper(Todolist)
+#curses.wrapper(Todolist)
 print(Todolist.main.__doc__)
