@@ -48,4 +48,4 @@ class Select:
                 scr.addstr(y,x," ")
         self.y = 0
 
-curses.wrapper(Select)
+#curses.wrapper(Select)
