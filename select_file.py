@@ -1,14 +1,14 @@
 import curses
 import os
 
-class Reader:
+class Select:
     def __init__(self,scr):
-        self.y = 0
+        self.y, self.app_running = 0, True
         self.main(scr)
 
     def main(self, scr):
         #curses.init_color(curses.COLOR_)
-        while True:
+        while self.app_running:
             self.pwd = os.getcwd()
             scr.addstr(0,0, self.pwd)
             self.files = os.listdir()
@@ -34,8 +34,13 @@ class Reader:
             if os.path.isdir(f):
                 os.chdir(f)
             else:
-                scr.addstr(0,10, f"edytujesz {f}")
-                scr.getkey()
+                confirm =f"Are you sure to read {repr(f)}?"
+                scr.addstr(len(self.files)+1,0, confirm)
+                if scr.getkey() in 'Yy':
+                    self.name = f"{self.pwd}/{f}"
+                    self.app_running = False
+                else:
+                    scr.addstr(len(self.files)+1,0, f"{' ':{len(confirm)}}")
     def clear(self, scr):
         h,w = scr.getmaxyx()
         for y in range(h-1):
@@ -43,4 +48,4 @@ class Reader:
                 scr.addstr(y,x," ")
         self.y = 0
 
-curses.wrapper(Reader)
+curses.wrapper(Select)
