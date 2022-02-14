@@ -41,6 +41,8 @@ class Select:
                     self.app_running = False
                 else:
                     scr.addstr(len(self.files)+1,0, f"{' ':{len(confirm)}}")
+            self.clear(scr)
+
     def clear(self, scr):
         h,w = scr.getmaxyx()
         for y in range(h-1):
