@@ -1,9 +1,10 @@
 import curses
-import os
+import os,sys
 import json
 
 class Select:
     def __init__(self,scr):
+        self.start_pwd = f"{os.getcwd()}/config"
         self.y, self.app_running = 0, True
         self.main(scr)
         self.save_file_name()
@@ -11,6 +12,7 @@ class Select:
     def main(self, scr):
         curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        #self.pwd = os.chdir(self.start_pwd)
         # 
         while self.app_running:
             self.pwd = os.getcwd()
@@ -64,11 +66,14 @@ class Select:
     def save_file_name(self):
         try:
             f = json.load(open('config.json'))['files']
-            f.append(self.name)
-            json.dump({'files': f}, open('config.json','w'), indent=4, ensure_ascii=False)
+            #f.append(self.name)
+            #json.dump({'files': f}, open(f'{self.start_pwd}/config.json','w'), indent=4, ensure_ascii=False)
         except:
-            json.dump({'files':[]}, open('config.json','w'), indent=4, ensure_ascii=False)
-            self.save_file_name()
+            open(f'{self.start_pwd}/config.json','w')
+            f = [self.name]
+            #json.dump({'files':[self.name]}, f, indent=4, ensure_ascii=False)
+            #self.save_file_name()
+        json.dump({'files': f}, open(f'{self.start_pwd}/config.json','w'), indent=4, ensure_ascii=False)
 
 
 
