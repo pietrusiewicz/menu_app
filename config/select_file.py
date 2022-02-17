@@ -4,7 +4,7 @@ import json
 
 class Select:
     def __init__(self,scr):
-        self.start_pwd = f"{os.getcwd()}/config"
+        self.config_pwd = f"{os.getcwd()}/config/config.json"
         self.y, self.app_running = 0, True
         self.main(scr)
         self.save_file_name()
@@ -65,12 +65,12 @@ class Select:
         self.y = 0
     def save_file_name(self):
         try:
-            f = json.load(open(f'{self.start_pwd}/config.json'))['files']
+            f = json.load(open(self.config_pwd))['files']
             f.append(self.name)
         except:
-            open(f'{self.start_pwd}/config.json','w')
+            open(self.config_pwd,'w')
             f = [self.name]
-        json.dump({'files': f}, open(f'{self.start_pwd}/config.json','w'), indent=4, ensure_ascii=False)
+        json.dump({'files': f}, open(self.config_pwd,'w'), indent=4, ensure_ascii=False)
 
 
 

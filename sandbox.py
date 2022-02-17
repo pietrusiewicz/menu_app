@@ -8,7 +8,7 @@ from config.select_file import Select
 
 class Reader:
     def __init__(self,scr):
-        self.start_pwd = os.getcwd()
+        self.config_pwd = os.getcwd()+'/config/config.json'
         self.y = 0
         self.check_files(scr)
         self.main(scr)
@@ -42,7 +42,7 @@ class Reader:
 
     def check_files(self, scr):
         try:
-            self.files = json.load(open(self.start_pwd+'/config/config.json'))['files']
+            self.files = json.load(open(self.config_pwd))['files']
         except:
             Select(scr)
             self.check_files(scr)
