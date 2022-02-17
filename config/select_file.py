@@ -65,14 +65,11 @@ class Select:
         self.y = 0
     def save_file_name(self):
         try:
-            f = json.load(open('config.json'))['files']
-            #f.append(self.name)
-            #json.dump({'files': f}, open(f'{self.start_pwd}/config.json','w'), indent=4, ensure_ascii=False)
+            f = json.load(open(f'{self.start_pwd}/config.json'))['files']
+            f.append(self.name)
         except:
             open(f'{self.start_pwd}/config.json','w')
             f = [self.name]
-            #json.dump({'files':[self.name]}, f, indent=4, ensure_ascii=False)
-            #self.save_file_name()
         json.dump({'files': f}, open(f'{self.start_pwd}/config.json','w'), indent=4, ensure_ascii=False)
 
 
