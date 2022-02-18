@@ -14,7 +14,12 @@ class Reader:
         self.main(scr)
 
     def main(self, scr):
-        while True:
+        self.select_file_to_read(scr)
+
+
+    def select_file_to_read(self,scr):
+        self.loop = True
+        while self.loop:
             self.clear_board(scr)
 
             # display items
@@ -26,26 +31,32 @@ class Reader:
             else:
                 scr.addstr(self.y+1, 0, f"{self.y+1}) {self.files[self.y]}", curses.A_UNDERLINE)
                 scr.addstr(len(self.files)+1, 0, f"+) Add text file") # }}}
-            self.press_an_arrow(scr.getkey())
+            self.press_a_key(scr.getkey())
+        self.selected_file = self.files[self.y]
+
+    # clear board
+    def clear_board(self, scr): #{{{
+        h,w = scr.getmaxyx()
+        for i in range(h-1):
+            scr.addstr(i,0,f"{' ':{w-1}}") # }}}
+
+    # check files
+    def check_files(self, szcr): # {{{
+        try:
+            # check syntax json file
+            self.files = json.load(open(self.config_pwd))['files']
+        except:
+            # when syntax json is wrong
+            Select(scr)
+            self.check_files(scr) # }}}
 
     # press an arrow
-    def press_an_arrow(self, key): # {{{
+    def press_a_key(self, key): # {{{
         if key == 'KEY_UP' and self.y>0:
             self.y-=1
         if key == 'KEY_DOWN' and self.y<len(self.files):
-            self.y+=1 # }}}
-
-    def clear_board(self, scr):
-        h,w = scr.getmaxyx()
-        for i in range(h-1):
-            scr.addstr(i,0,f"{' ':{w-1}}")
-
-    def check_files(self, scr):
-        try:
-            self.files = json.load(open(self.config_pwd))['files']
-        except:
-            Select(scr)
-            self.check_files(scr)
-
+            self.y+=1 
+        if key in ('\n', 'KEY_RIGHT'):
+            self.loop = False # }}}
 
 curses.wrapper(Reader)

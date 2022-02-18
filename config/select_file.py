@@ -74,4 +74,4 @@ class Select:
 
 
 
-curses.wrapper(Select)
+#curses.wrapper(Select)
