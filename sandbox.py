@@ -14,7 +14,12 @@ class Reader:
         self.main(scr)
 
     def main(self, scr):
-        self.select_file_to_read(scr)
+        while True:
+            self.clear_board(scr)
+            scr.addstr(0,0,self.selected_file)
+            key = scr.getkey()
+            if key in ('0'):
+                self.select_file_to_read(scr)
 
 
     def select_file_to_read(self,scr):
@@ -31,7 +36,7 @@ class Reader:
             else:
                 scr.addstr(self.y+1, 0, f"{self.y+1}) {self.files[self.y]}", curses.A_UNDERLINE)
                 scr.addstr(len(self.files)+1, 0, f"+) Add text file") # }}}
-            self.press_a_key(scr.getkey())
+            self.press_a_key(scr.getkey(), scr)
         self.selected_file = self.files[self.y]
 
     # clear board
@@ -41,22 +46,33 @@ class Reader:
             scr.addstr(i,0,f"{' ':{w-1}}") # }}}
 
     # check files
-    def check_files(self, szcr): # {{{
+    def check_files(self, scr): # {{{
         try:
             # check syntax json file
-            self.files = json.load(open(self.config_pwd))['files']
+            jsonfile = json.load(open(self.config_pwd))
+            self.files = jsonfile['files']
+            self.selected_file = jsonfile['selected']
         except:
             # when syntax json is wrong
             Select(scr)
             self.check_files(scr) # }}}
 
     # press an arrow
-    def press_a_key(self, key): # {{{
+    def press_a_key(self, key,scr): # {{{
         if key == 'KEY_UP' and self.y>0:
             self.y-=1
         if key == 'KEY_DOWN' and self.y<len(self.files):
             self.y+=1 
+        #if key == 'KEY_LEFT':
         if key in ('\n', 'KEY_RIGHT'):
-            self.loop = False # }}}
+            self.loop = False 
+            if self.y in range(len(self.files)):
+                self.selected_file = self.files[self.y]
+                f = open('self.config_pwd', 'w')
+                jsonfile = json.dump({'files': self.files, 'selected':self.selected_file},f)
+            else:
+                self.clear(scr)
+                Select(scr)
+            # }}}
 
 curses.wrapper(Reader)

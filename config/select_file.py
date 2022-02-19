@@ -63,14 +63,15 @@ class Select:
         for y in range(h-1):
             scr.addstr(y,0,f"{' ':{w-1}}")
         self.y = 0
+
     def save_file_name(self):
         try:
-            f = json.load(open(self.config_pwd))['files']
-            f.append(self.name)
+            jsonfile = json.load(open(self.config_pwd))['files']
+            jsonfile.append(self.name)
         except:
-            open(self.config_pwd,'w')
-            f = [self.name]
-        json.dump({'files': f}, open(self.config_pwd,'w'), indent=4, ensure_ascii=False)
+            jsonfile = [self.name]
+        f = open(self.config_pwd,'w')
+        json.dump({'files': jsonfile, 'selected': jsonfile[self.y]}, f, indent=4, ensure_ascii=False)
 
 
 
