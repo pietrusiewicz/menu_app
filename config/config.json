@@ -4,7 +4,11 @@
         "/home/linus/Documents/menu_app/sandbox.py",
         "/home/linus/Documents/menu_app/sandbox.py",
         "/home/linus/Documents/menu_app/sandbox.py",
-        "/home/linus/Documents/menu_app/.sandbox.py.swp"
+        "/home/linus/Documents/menu_app/.sandbox.py.swp",
+        "/home/linus/Documents/menu_app/sandbox.py",
+        "/home/linus/Documents/menu_app/.sandbox.py.swp",
+        "/home/linus/Documents/menu_app/README.md",
+        "/home/linus/Documents/menu_app/modules/snake.py"
     ],
-    "selected": "sandbox.py"
+    "selected": "/home/linus/Documents/menu_app/modules/snake.py"
 }

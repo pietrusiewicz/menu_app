@@ -71,7 +71,7 @@ class Select:
         except:
             jsonfile = [self.name]
         f = open(self.config_pwd,'w')
-        json.dump({'files': jsonfile, 'selected': jsonfile[self.y]}, f, indent=4, ensure_ascii=False)
+        json.dump({'files': jsonfile, 'selected': self.name}, f, indent=4, ensure_ascii=False)
 
 
 

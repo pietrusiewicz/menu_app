@@ -37,7 +37,6 @@ class Reader:
                 scr.addstr(self.y+1, 0, f"{self.y+1}) {self.files[self.y]}", curses.A_UNDERLINE)
                 scr.addstr(len(self.files)+1, 0, f"+) Add text file") # }}}
             self.press_a_key(scr.getkey(), scr)
-        self.selected_file = self.files[self.y]
 
     # clear board
     def clear_board(self, scr): #{{{
@@ -68,11 +67,13 @@ class Reader:
             self.loop = False 
             if self.y in range(len(self.files)):
                 self.selected_file = self.files[self.y]
-                f = open('self.config_pwd', 'w')
+                f = open(self.config_pwd, 'w')
                 jsonfile = json.dump({'files': self.files, 'selected':self.selected_file},f)
+                self.selected_file = self.files[self.y]
             else:
-                self.clear(scr)
+                self.clear_board(scr)
                 Select(scr)
+                self.selected_file = json.load(open(self.config_pwd))['selected']
             # }}}
 
 curses.wrapper(Reader)
