@@ -13,16 +13,19 @@ class Reader:
         self.check_files(scr)
         self.main(scr)
 
+
     def main(self, scr):
         while True:
             self.clear_board(scr)
             scr.addstr(0,0,self.selected_file)
             key = scr.getkey()
+            #f = open(self.selected_file)
             if key in ('0'):
                 self.select_file_to_read(scr)
 
 
-    def select_file_to_read(self,scr):
+    # select file
+    def select_file_to_read(self,scr): # {{{
         self.loop = True
         while self.loop:
             self.clear_board(scr)
@@ -36,7 +39,7 @@ class Reader:
             else:
                 scr.addstr(self.y+1, 0, f"{self.y+1}) {self.files[self.y]}", curses.A_UNDERLINE)
                 scr.addstr(len(self.files)+1, 0, f"+) Add text file") # }}}
-            self.press_a_key(scr.getkey(), scr)
+            self.move_to_select(scr.getkey(), scr) # }}}
 
     # clear board
     def clear_board(self, scr): #{{{
@@ -57,7 +60,7 @@ class Reader:
             self.check_files(scr) # }}}
 
     # press an arrow
-    def press_a_key(self, key,scr): # {{{
+    def move_to_select(self, key,scr): # {{{
         if key == 'KEY_UP' and self.y>0:
             self.y-=1
         if key == 'KEY_DOWN' and self.y<len(self.files):

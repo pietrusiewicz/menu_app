@@ -1,6 +1,7 @@
 import curses
 import os,sys
 import json
+import sqlite3
 
 class Select:
     def __init__(self,scr):
@@ -36,6 +37,7 @@ class Select:
             key = scr.getkey()
             self.press_an_arrow(scr, key)
 
+    # press an arrow
     def press_an_arrow(self, scr, key): # {{{
         if key == 'KEY_DOWN' and self.y+1<len(self.files):
             self.y+=1
@@ -58,21 +60,39 @@ class Select:
                     scr.addstr(len(self.files)+1,0, f"{' ':{len(confirm)}}")
             self.clear(scr) # }}}
 
+    # clears board
     def clear(self, scr):
         h,w = scr.getmaxyx()
         for y in range(h-1):
             scr.addstr(y,0,f"{' ':{w-1}}")
         self.y = 0
 
+    # after select
     def save_file_name(self):
-        try:
+        # operation in json file
+        try: # {{{
             jsonfile = json.load(open(self.config_pwd))['files']
             jsonfile.append(self.name)
         except:
-            jsonfile = [self.name]
+            jsonfile = [self.name] #}}}
         f = open(self.config_pwd,'w')
         json.dump({'files': jsonfile, 'selected': self.name}, f, indent=4, ensure_ascii=False)
 
-
+    def add_text_to_db():
+        # add to sqlite db
+        try:
+            conn = sqlite3.connect('texts.db')
+            cur = conn.cursor()
+            max_val = len(cur.execute("SELECT DISTINCT id FROM sentences"))
+            f = open('text.txt').readlines()
+            text_file = ' '.join([line.replace('\n','').replace("'",'"') for line in f])
+            cur.execute(f"INSERT INTO texts
+                    VALUES ('{self.name}', '{text_file}')")
+        except:
+            conn = sqlite3.connect('texts.db')
+            cur = conn.cursor()
+            cur.execute("CREATE TABLE texts
+                    (text_pwd text, content text)")
+            self.add_text_to_db()
 
 #curses.wrapper(Select)
