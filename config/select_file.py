@@ -1,14 +1,12 @@
 import curses
 import os,sys
 import json
-import sqlite3
 
 class Select:
     def __init__(self,scr):
         self.config_pwd = f"{os.getcwd()}/config/config.json"
         self.y, self.app_running = 0, True
         self.main(scr)
-        self.save_file_name()
 
     def main(self, scr):
         curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
@@ -36,6 +34,7 @@ class Select:
             scr.addstr(self.y+1,0, self.files[self.y], styl) # }}}
             key = scr.getkey()
             self.press_an_arrow(scr, key)
+        self.save_file_name()
 
     # press an arrow
     def press_an_arrow(self, scr, key): # {{{
@@ -78,6 +77,7 @@ class Select:
         f = open(self.config_pwd,'w')
         json.dump({'files': jsonfile, 'selected': self.name}, f, indent=4, ensure_ascii=False)
 
+    """
     def add_text_to_db():
         # add to sqlite db
         try:
@@ -94,5 +94,5 @@ class Select:
             cur.execute("CREATE TABLE texts
                     (text_pwd text, content text)")
             self.add_text_to_db()
-
+    """
 #curses.wrapper(Select)
