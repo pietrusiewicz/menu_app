@@ -3,17 +3,17 @@ import os,sys
 import json
 
 class Select:
-    def __init__(self,scr):
+    def __init__(self):
         self.config_pwd = f"{os.getcwd()}/config/config.json"
         self.y, self.app_running = 0, True
-        self.main(scr)
+        #self.main(scr)
 
-    def main(self, scr):
+    def get_filename(self, scr):
         curses.init_pair(1, curses.COLOR_BLUE, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_WHITE, curses.COLOR_BLACK)
         #self.pwd = os.chdir(self.start_pwd)
-        # 
-        while self.app_running:
+        # select menu
+        while self.app_running: # {{{
             self.pwd = os.getcwd()
             scr.addstr(0,0, self.pwd)
             self.files = os.listdir()
@@ -34,7 +34,9 @@ class Select:
             scr.addstr(self.y+1,0, self.files[self.y], styl) # }}}
             key = scr.getkey()
             self.press_an_arrow(scr, key)
+            # }}}
         self.save_file_name()
+        # line 58: self.name = f"{self.pwd}/{f}"
 
     # press an arrow
     def press_an_arrow(self, scr, key): # {{{
@@ -60,39 +62,24 @@ class Select:
             self.clear(scr) # }}}
 
     # clears board
-    def clear(self, scr):
+    def clear(self, scr): # {{{
         h,w = scr.getmaxyx()
         for y in range(h-1):
             scr.addstr(y,0,f"{' ':{w-1}}")
-        self.y = 0
+        self.y = 0 # }}}
 
     # after select
-    def save_file_name(self):
-        # operation in json file
+    def save_file_name(self): #{{{
+        # append element to list
         try: # {{{
             jsonfile = json.load(open(self.config_pwd))['files']
             jsonfile.append(self.name)
         except:
             jsonfile = [self.name] #}}}
-        f = open(self.config_pwd,'w')
-        json.dump({'files': jsonfile, 'selected': self.name}, f, indent=4, ensure_ascii=False)
 
-    """
-    def add_text_to_db():
-        # add to sqlite db
-        try:
-            conn = sqlite3.connect('texts.db')
-            cur = conn.cursor()
-            max_val = len(cur.execute("SELECT DISTINCT id FROM sentences"))
-            f = open('text.txt').readlines()
-            text_file = ' '.join([line.replace('\n','').replace("'",'"') for line in f])
-            cur.execute(f"INSERT INTO texts
-                    VALUES ('{self.name}', '{text_file}')")
-        except:
-            conn = sqlite3.connect('texts.db')
-            cur = conn.cursor()
-            cur.execute("CREATE TABLE texts
-                    (text_pwd text, content text)")
-            self.add_text_to_db()
-    """
+        # save
+        f = open(self.config_pwd,'w') #{{{
+        json.dump({'files': jsonfile, 'selected': self.name}, f, indent=4, ensure_ascii=False) #}}}
+    # }}}
+
 #curses.wrapper(Select)
