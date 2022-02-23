@@ -64,7 +64,9 @@ class Menu:
         self.d.table_name='texts'
         just_created = self.d.check_table()
         r = Reader()
+        s = Select()
         if just_created:
+            s.get_filename(scr)
             r.select_file_to_read(scr)
         t = self.d.select("WHERE last_open=1")[0]
         r.main(scr, t)
