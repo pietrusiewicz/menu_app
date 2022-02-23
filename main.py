@@ -43,22 +43,9 @@ class Menu:
                 Todolist(scr)
                 #t.main(scr)
 
-# READER ======================================================================================={{{
             if self.y==2:
-                r = Reader()
-                if r.files_wrong():
-                    # repairs json file
-                    s = Select()
-                    s.get_filename(scr)
-                    self.d.table_name='texts'
-                    self.d.check_table()
-                    #(text_pwd, content, nr_sentence, last_open)
-                    content = ' '.join([line.replace('\n','').replace("'",'"') for line in open(self.name).readlines()])
-                    data = [self.name, content, 0, 1]
-                    self.d.insert_into(data)
-                t = self.d.raw_query("SELECT * FROM texts WHERE last_open=1")[0]
-                r.main(scr, t)
-# ==============================================================================================}}}
+                self.launch_reader(scr)
+
             if self.y==3:
                 #s = Snake(scr)
                 Snake(scr)
@@ -71,6 +58,18 @@ class Menu:
             self.main(scr)
         #scr.addstr(15, 15, f'{self.apps[self.y]} {self.y}')
         # }}}
+
+# READER ======================================================================================={{{
+    def launch_reader(self, scr):
+        self.d.table_name='texts'
+        just_created = self.d.check_table()
+        r = Reader()
+        if just_created:
+            r.select_file_to_read(scr)
+        t = self.d.select("WHERE last_open=1")[0]
+        r.main(scr, t)
+        
+# ==============================================================================================}}}
 
 if __name__ == '__main__':
     curses.wrapper(Menu)

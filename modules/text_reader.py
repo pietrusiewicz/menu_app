@@ -20,7 +20,7 @@ class Reader:
         if key == 'q':
             self.quit='yes'
         if key == '0':
-            self.select_file_to_read(scr)
+            self.select_file_to_read(scr) #}}}
 
     # select file
     def select_file_to_read(self,scr): # {{{
@@ -30,7 +30,7 @@ class Reader:
             self.clear_board(scr)
 
             # displays items
-            # ===================================================================================== {{{
+# ============================================================================================= {{{
 
             scr.addstr(0, 0, f"Select text file what you want to read:")
             for i in range(len(self.files)):
@@ -42,7 +42,7 @@ class Reader:
                 scr.addstr(len(self.files)+1, 0, f"+) Add text file")
                 scr.addstr(len(self.files)+2, 0, f"[d]elete item")
 
-            # ===================================================================================== }}}
+# ============================================================================================= }}}
             self.press_a_key(scr.getkey(), scr) # }}}
 
     # clear board
