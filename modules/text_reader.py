@@ -57,18 +57,16 @@ class Reader:
             self.y-=1
         if key == 'KEY_DOWN' and self.y<len(self.files):
             self.y+=1 
-        #if key == 'KEY_LEFT':
+        # select file
         if key in ('\n', 'KEY_RIGHT'):
             self.loop = False 
             if self.y in range(len(self.files)):
-                #self.selected_file = self.files[self.y]
-                f = open(self.config_pwd, 'w')
-                jsonfile = json.dump({'files': self.files, 'selected':self.selected_file},f)
-                #self.selected_file = self.files[self.y]
+                self.selected_file = self.files[self.y]
             else:
                 self.clear_board(scr)
-                Select(scr)
-                self.selected_file = json.load(open(self.config_pwd))['selected']
+                s = Select(scr)
+                # when add
+                self.selected_file = s.get_filename(scr)
         if self.y in range(len(self.files)):
             if key in 'd':
                 del self.files[self.y]
