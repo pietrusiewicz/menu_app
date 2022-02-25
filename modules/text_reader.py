@@ -12,7 +12,7 @@ class Reader:
         self.y = 0
         #self.main(scr)
 
-    # selects a read file
+    # read the text
     def main(self, scr, t): # {{{
         key = scr.getkey()
         text = t[1]

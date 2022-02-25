@@ -3,6 +3,7 @@ import os,sys
 import json
 
 class Select:
+    ""
     def __init__(self):
         self.config_pwd = f"{os.getcwd()}/config/config.json"
         self.y, self.app_running = 0, True
@@ -35,8 +36,9 @@ class Select:
             key = scr.getkey()
             self.press_an_arrow(scr, key)
             # }}}
-        self.save_file_name()
+        #self.save_file_name()
         # line 58: self.name = f"{self.pwd}/{f}"
+        return self.name
 
     # press an arrow
     def press_an_arrow(self, scr, key): # {{{
@@ -68,18 +70,5 @@ class Select:
             scr.addstr(y,0,f"{' ':{w-1}}")
         self.y = 0 # }}}
 
-    # after select
-    def save_file_name(self): #{{{
-        # append element to list
-        try: # {{{
-            jsonfile = json.load(open(self.config_pwd))['files']
-            jsonfile.append(self.name)
-        except:
-            jsonfile = [self.name] #}}}
-
-        # save
-        f = open(self.config_pwd,'w') #{{{
-        json.dump({'files': jsonfile, 'selected': self.name}, f, indent=4, ensure_ascii=False) #}}}
-    # }}}
 
 #curses.wrapper(Select)
