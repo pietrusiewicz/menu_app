@@ -67,12 +67,33 @@ class Menu:
         s = Select()
         if just_created:
             file_name = s.get_filename(scr)
+            text = r.get_text()
+            self.d.insert_into([file_name,text, 0, 1])
             #got_filename = s.selected_file
             r.select_file_to_read(scr)
         t = self.d.select("WHERE last_open=1")[0]
-        r.main(scr, t)
-        
+        #t = "Kobyła. ma. mały. bok."
+        i = 0
+        r.page_lines = 5
+        self.loop=True
+        while self.loop:
+            r.read(scr, t[3]+i)
+            key = scr.getkey()
+            if key == 'KEY_DOWN':
+                i += 1
+            if key == 'KEY_UP':
+                i -= 1
+            if key == 'KEY_RIGHT':
+                i += r.page_lines
+            if key == 'KEY_LEFT':
+                i -= r.page_lines
+            if key == 'q':
+                self.loop = False
+            # change read file
+            if key == '0':
+                return r.select_file_to_read(scr) #}}}
 # ==============================================================================================}}}
+    #def 
 
 if __name__ == '__main__':
     curses.wrapper(Menu)

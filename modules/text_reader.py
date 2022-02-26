@@ -2,10 +2,6 @@ import os
 import curses
 import json
 
-#from config.select_file import Select
-#s = curses.wrapper(Select)
-#file_name = s.name
-
 class Reader:
     def __init__(self):
         self.config_pwd = os.getcwd()+'/config/config.json'
@@ -13,14 +9,9 @@ class Reader:
         #self.main(scr)
 
     # read the text
-    def main(self, scr, t): # {{{
-        key = scr.getkey()
+    def read(self, scr, t): # {{{
         text = t[1]
         scr.addstr()
-        if key == 'q':
-            self.quit='yes'
-        if key == '0':
-            self.select_file_to_read(scr) #}}}
 
     # select file
     def select_file_to_read(self,scr): # {{{
@@ -44,6 +35,7 @@ class Reader:
 
 # ============================================================================================= }}}
             self.press_a_key(scr.getkey(), scr) # }}}
+        return self.selected_file
 
     # clear board
     def clear_board(self, scr): #{{{
@@ -83,9 +75,9 @@ class Reader:
             return True # }}}
 
     # get self.files and self.selected_file
-    def get_files(self): # {{{
-        jsonfile = json.load(open(self.config_pwd))
-        self.files = jsonfile['files']
-        self.selected_file = jsonfile['selected'] #}}}
+    def get_text(self, name): # {{{
+        text = ' '.join([line.replace('\n','').replace('\'','"') for line in open(name).readlines()])
+        return text
+        # }}}
 
 #curses.wrapper(Reader)
