@@ -9,12 +9,13 @@ class Reader:
         #self.main(scr)
 
     # read the text
-    def read(self, scr, t): # {{{
-        text = t[1]
-        scr.addstr()
+    def read(self, scr, nr_sentence, content): # {{{
+        text = content[nr_sentence]
+        scr.addstr(text)
+        # }}}
 
     # select file
-    def select_file_to_read(self,scr): # {{{
+    def select_file_to_read(self, scr): # {{{
         self.loop = True
         self.get_files()
         while self.loop:
@@ -61,20 +62,9 @@ class Reader:
                 self.selected_file = s.get_filename(scr)
         if self.y in range(len(self.files)):
             if key in 'd':
-                del self.files[self.y]
-            # }}}
+                del self.files[self.y] # }}}
 
-    # valid the files
-    def files_wrong(self): # {{{
-        try:
-            # check syntax json file
-            self.get_files()
-            return False
-        except:
-            # when syntax json is wrong or empty
-            return True # }}}
 
-    # get self.files and self.selected_file
     def get_text(self, name): # {{{
         text = ' '.join([line.replace('\n','').replace('\'','"') for line in open(name).readlines()])
         return text

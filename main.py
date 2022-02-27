@@ -65,19 +65,20 @@ class Menu:
         just_created = self.d.check_table()
         r = Reader()
         s = Select()
-        if just_created:
+        # first time launch
+        if just_created: # {{{
             file_name = s.get_filename(scr)
-            text = r.get_text()
-            self.d.insert_into([file_name,text, 0, 1])
-            #got_filename = s.selected_file
-            r.select_file_to_read(scr)
+            text = r.get_text(file_name)
+            self.d.insert_into([file_name,text, 0, 1]) # }}}
+
         t = self.d.select("WHERE last_open=1")[0]
-        #t = "Kobyła. ma. mały. bok."
         i = 0
-        r.page_lines = 5
+        r.page_lines = 2
         self.loop=True
         while self.loop:
-            r.read(scr, t[3]+i)
+            # nr sentence, content
+            nr_sentence, content = int(t[2]+i),t[1].split('.')
+            r.read(scr, nr_sentence, content)
             key = scr.getkey()
             if key == 'KEY_DOWN':
                 i += 1
@@ -91,7 +92,11 @@ class Menu:
                 self.loop = False
             # change read file
             if key == '0':
-                return r.select_file_to_read(scr) #}}}
+                #(text_pwd text, content text, nr_sentence real, last_open real)
+                old_name = file_name
+                r.files = self.d.select(cols='text_pwd')
+                file_name = r.select_file_to_read(scr)
+                self.d.update_row('last_open', 0, f"WHERE text_pwd='{old_name}'")
 # ==============================================================================================}}}
     #def 
 
