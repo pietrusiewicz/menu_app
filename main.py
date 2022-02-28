@@ -71,7 +71,7 @@ class Menu:
             text = r.get_text(file_name)
             self.d.insert_into([file_name,text, 0, 1]) # }}}
 
-        t = self.d.select("WHERE last_open=1")[0]
+        t = self.d.select(where="WHERE last_open=1")[0]
         i = 0
         r.page_lines = 2
         self.loop=True
