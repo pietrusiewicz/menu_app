@@ -10,8 +10,10 @@ class Reader:
 
     # read the text
     def read(self, scr, nr_sentence, content): # {{{
-        text = content[nr_sentence]
-        scr.addstr(text)
+        for i in range(self.page_lines):
+            nr_sentence += i-self.page_lines
+            text = content[nr_sentence]
+            scr.addstr(i,0,text)
         # }}}
 
     # select file
