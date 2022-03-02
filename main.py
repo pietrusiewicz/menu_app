@@ -73,12 +73,13 @@ class Menu:
 
         t = self.d.select(where="WHERE last_open=1")[0]
         i = 0
-        r.page_lines = 2
+        r.page_lines = 3
+        r.content = t[1].split('.')
         self.loop=True
         while self.loop:
             # nr sentence, content
-            nr_sentence, content = int(t[2]+i),t[1].split('.')
-            r.read(scr, nr_sentence, content)
+            nr_sentence = int(t[2]+i)
+            r.read(scr, nr_sentence)
             key = scr.getkey()
             if key == 'KEY_DOWN':
                 i += 1

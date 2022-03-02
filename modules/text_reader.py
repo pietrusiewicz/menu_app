@@ -7,13 +7,13 @@ class Reader:
         self.config_pwd = os.getcwd()+'/config/config.json'
         self.y = 0
         #self.main(scr)
+        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
     # read the text
-    def read(self, scr, nr_sentence, content): # {{{
-        for i in range(self.page_lines):
-            nr_sentence += i-self.page_lines
-            text = content[nr_sentence]
-            scr.addstr(i,0,text)
+    def read(self, scr, nr_sentence): # {{{
+        w = scr.getmaxyx()[1]
+        scr.addstr(0,0,f"{nr_sentence}) {self.content[nr_sentence]:{w}}", curses.color_pair(1))
+
         # }}}
 
     # select file
