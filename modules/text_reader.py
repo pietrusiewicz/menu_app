@@ -1,6 +1,6 @@
 import os
 import curses
-import json
+import math
 
 class Reader:
     def __init__(self):
@@ -12,7 +12,16 @@ class Reader:
     # read the text
     def read(self, scr, nr_sentence): # {{{
         w = scr.getmaxyx()[1]
-        scr.addstr(0,0,f"{nr_sentence}) {self.content[nr_sentence]:{w}}", curses.color_pair(1))
+        text=f"{nr_sentence}) {self.content[nr_sentence]}"
+        if len(text) < w:
+            scr.addstr(0,0, f"{text:{w}}", curses.color_pair(1))
+
+        else:
+            diff = math.ceil(len(text)/w)
+            #text = 
+            for i in range(diff):
+                scr.addstr(i,0, f"{text[w*i:w*i+1]:{w}}", curses.color_pair(1))
+        #scr.addstr(0,0, "o chuj chodzi", curses.color_pair(1))
 
         # }}}
 
