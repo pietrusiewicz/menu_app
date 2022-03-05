@@ -18,9 +18,12 @@ class Reader:
 
         else:
             diff = math.ceil(len(text)/w)
-            #text = 
+            #text = text[]
             for i in range(diff):
-                scr.addstr(i,0, f"{text[w*i:w*i+1]:{w}}", curses.color_pair(1))
+                # start string index
+                t = i*w
+                text_var = text[t:t+w] if t+w < len(text) else text[t:-1]
+                scr.addstr(i,0, f"{text[t:t+w]:{w}}", curses.color_pair(1))
         #scr.addstr(0,0, "o chuj chodzi", curses.color_pair(1))
 
         # }}}
