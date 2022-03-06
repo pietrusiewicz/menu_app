@@ -12,9 +12,10 @@ class Reader:
     # read the text
     def read(self, scr, nr_sentence): # {{{
         w = scr.getmaxyx()[1]
+        sw = (w//9)*2
         text=f"{nr_sentence}) {self.content[nr_sentence]}"
         if len(text) < w:
-            scr.addstr(0,0, f"{text:{w}}", curses.color_pair(1))
+            scr.addstr(0,sw, f"{text:{w-sw}}", curses.color_pair(1))
 
         else:
             diff = math.ceil(len(text)/w)
@@ -23,8 +24,8 @@ class Reader:
                 # start string index
                 t = i*w
                 text_var = text[t:t+w] if t+w < len(text) else text[t:-1]
-                scr.addstr(i,0, f"{text[t:t+w]:{w}}", curses.color_pair(1))
-        #scr.addstr(0,0, "o chuj chodzi", curses.color_pair(1))
+                scr.addstr(i,sw, f"{text[t:t+w]:{w-sw}}", curses.color_pair(1))
+
 
         # }}}
 
@@ -78,7 +79,7 @@ class Reader:
             if key in 'd':
                 del self.files[self.y] # }}}
 
-
+    # get content from text file
     def get_text(self, name): # {{{
         text = ' '.join([line.replace('\n','').replace('\'','"') for line in open(name).readlines()])
         return text

@@ -44,7 +44,7 @@ class Menu:
                 #t.main(scr)
 
             if self.y==2:
-                self.launch_reader(scr)
+                self.reader(scr)
 
             if self.y==3:
                 #s = Snake(scr)
@@ -60,7 +60,7 @@ class Menu:
         # }}}
 
 # READER ======================================================================================={{{
-    def launch_reader(self, scr):
+    def reader(self, scr):
         self.d.table_name='texts'
         just_created = self.d.check_table()
         r = Reader()
@@ -79,16 +79,21 @@ class Menu:
         while self.loop:
             # nr sentence, content
             nr_sentence = int(t[2]+i)
+
+            # display content
             r.read(scr, nr_sentence)
+
+
             key = scr.getkey()
-            if key == 'KEY_DOWN':
+            if key == 'KEY_DOWN': # {{{
                 i += 1
             if key == 'KEY_UP':
                 i -= 1
             if key == 'KEY_RIGHT':
                 i += r.page_lines
             if key == 'KEY_LEFT':
-                i -= r.page_lines
+                i -= r.page_lines # }}}
+            # exit
             if key == 'q':
                 self.loop = False
             # change read file
