@@ -7,7 +7,7 @@ class Database:
         #self.t = table_name
         #self.check_table()
 
-    def check_table(self):
+    def just_created(self):
         try:
             self.cols = self.cur.execute(f"SELECT * FROM {self.table_name}")
             return 0

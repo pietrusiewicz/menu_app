@@ -10,7 +10,7 @@ from config.database import Database
 
 class Menu:
     def __init__(self, scr):
-        self.apps = ['todolist', 'blog', 'text_reader','snake', 'end']
+        self.apps = ['todolist', 'blog', 'text_reader','snake', 'exit']
         self.y = 0
         self.d = Database()
         self.main(scr)
@@ -35,9 +35,10 @@ class Menu:
             if key == "KEY_DOWN" and self.y+1<len(self.apps):
                 self.y += 1
             self.main(scr)
-            
-        elif key in ('\n', "KEY_RIGHT"):
 
+
+        # enter a program
+        elif key in ('\n', "KEY_RIGHT"): # {{{
             if self.y==0:
                 #t = Todolist(scr)
                 Todolist(scr)
@@ -53,7 +54,7 @@ class Menu:
             if self.y==len(self.apps)-1:
                 curses.endwin()
                 sys.exit()
-            self.main(scr)
+            self.main(scr) # }}}
         else:
             self.main(scr)
         #scr.addstr(15, 15, f'{self.apps[self.y]} {self.y}')
@@ -62,11 +63,10 @@ class Menu:
 # READER ======================================================================================={{{
     def reader(self, scr):
         self.d.table_name='texts'
-        just_created = self.d.check_table()
         r = Reader()
         s = Select()
         # first time launch
-        if just_created: # {{{
+        if self.d.just_created(): # {{{
             file_name = s.get_filename(scr)
             text = r.get_text(file_name)
             self.d.insert_into([file_name,text, 0, 1]) # }}}
@@ -104,7 +104,6 @@ class Menu:
                 file_name = r.select_file_to_read(scr)
                 self.d.update_row('last_open', 0, f"WHERE text_pwd='{old_name}'")
 # ==============================================================================================}}}
-    #def 
 
 if __name__ == '__main__':
     curses.wrapper(Menu)
