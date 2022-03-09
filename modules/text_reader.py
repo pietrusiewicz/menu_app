@@ -9,7 +9,7 @@ class Reader:
         #self.main(scr)
         curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
-    # read the text
+    # displays text
     def read(self, scr, nr_sentence): # {{{
         w = scr.getmaxyx()[1]
         sw = (w//9)*2
@@ -22,9 +22,9 @@ class Reader:
             #text = text[]
             for i in range(diff):
                 # start string index
-                t = i*w
-                text_var = text[t:t+w] if t+w < len(text) else text[t:-1]
-                scr.addstr(i,sw, f"{text[t:t+w]:{w-sw}}", curses.color_pair(1))
+                t = i*(w-sw)
+                text_var = text[t:t+sw] if t+sw < len(text) else text[t:-1]
+                scr.addstr(i,sw, f"{text_var:{w-sw}}", curses.color_pair(1))
 
 
         # }}}
@@ -56,8 +56,9 @@ class Reader:
     # clear board
     def clear_board(self, scr): #{{{
         h,w = scr.getmaxyx()
+        sw = (w//9)*2
         for i in range(h-1):
-            scr.addstr(i,0,f"{' ':{w-1}}") # }}}
+            scr.addstr(i,sw, f"{' ':{w-sw}}") # }}}
 
     # press a key
     def press_a_key(self, key,scr): # {{{

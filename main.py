@@ -81,6 +81,7 @@ class Menu:
             nr_sentence = int(t[2]+i)
 
             # display content
+            r.clear_board(scr)
             r.read(scr, nr_sentence)
 
 
