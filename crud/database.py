@@ -8,4 +8,7 @@ class Database:
     def create(self, cols):
         "cols is string what defines columns real or text"
         self.cur.execute(f'CREATE TABLE {self.table} ({cols})')
+    
+    def append(self, values):
+        self.cur.execute(f'INSERT INTO {self.table} VALUES ({cols})')
 
