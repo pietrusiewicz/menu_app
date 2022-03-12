@@ -12,3 +12,5 @@ class Database:
     def append(self, values):
         self.cur.execute(f'INSERT INTO {self.table} VALUES ({cols})')
 
+    def read(self, where='1', cols='*'):
+        rows = self.cur.execute(f"SELECT {cols} FROM {self.table} WHERE {where}")
