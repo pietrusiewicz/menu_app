@@ -5,6 +5,7 @@ class Database:
         self.con = sqlite3.connect('db.db')
         self.cur = self.con.cursor()
 
+class Create(Database):
     def create(self, cols):
         "cols is string what defines columns real or text"
         self.cur.execute(f'CREATE TABLE {self.table} ({cols})')
@@ -12,6 +13,7 @@ class Database:
     def append(self, values):
         self.cur.execute(f'INSERT INTO {self.table} VALUES ({cols})')
 
+class Read(Database):
     def read(self, where='1', cols='*'):
         rows = list(self.cur.execute(f"SELECT {cols} FROM {self.table} WHERE {where}"))
         return rows
