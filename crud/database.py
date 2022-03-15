@@ -17,3 +17,7 @@ class Read(Database):
     def read(self, where='1', cols='*'):
         rows = list(self.cur.execute(f"SELECT {cols} FROM {self.table} WHERE {where}"))
         return rows
+
+class Update(Database):
+    def update(self):
+        self.cur.execute(f"")
