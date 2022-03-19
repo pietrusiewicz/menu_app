@@ -19,5 +19,5 @@ class Read(Database):
         return rows
 
 class Update(Database):
-    def update(self):
-        self.cur.execute(f"")
+    def update(self, col, val, where='1'):
+        self.cur.execute(f"UPDATE {self.table} SET {col}={val} WHERE 1")
