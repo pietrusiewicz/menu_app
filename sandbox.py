@@ -1,21 +1,30 @@
 import curses
+import time
+import sys
 
 class Menu:
     def __init__(self,scr):
-        self.config_pwd = os.getcwd()+'/config/config.json'
-        self.y = 0
-        self.check_files(scr)
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        self.key = "a"
         self.main(scr)
-
 
     def main(self, scr):
         while True:
             self.clear_board(scr)
-            scr.addstr(0,0,self.selected_file)
-            key = scr.getkey()
+            scr.addstr(0,0,"/0) start /1) snake /2) todolist", curses.color_pair(1))
+            scr.addstr(0,0,f"{ord(self.key)}")
+            #scr.addstr(0,0,str(type(self.key)))
+            self.key = scr.getkey()
+            if ord(self.key) == 27:
+                sys.exit()
             #f = open(self.selected_file)
-            if key in ('0'):
-                self.select_file_to_read(scr)
 
+     # clear board
+    def clear_board(self, scr): #{{{
+        h,w = scr.getmaxyx()
+        for i in range(h-1):
+            scr.addstr(i,0,f"{' ':{w-1}}") # }}}
 
 curses.wrapper(Menu)
