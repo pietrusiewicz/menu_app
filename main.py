@@ -10,7 +10,7 @@ from config.database import Database
 
 class Menu:
     def __init__(self, scr):
-        self.apps = ['todolist', 'blog', 'text_reader','snake', 'exit']
+        self.apps = ['todolist', 'text_reader','snake', 'exit']
         self.y = 0
         self.d = Database()
         self.main(scr)
