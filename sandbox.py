@@ -24,19 +24,23 @@ class Menu:
             start_index = menu_str.find(str(self.xy[0]))-1
             end_index = menu_str.find(str(self.xy[0]+1))-2
             scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
-        self.display_tiles()
+        self.display_tiles(scr)
         #scr.addstr(0,0,f"{ord(self.key)}")
         #scr.addstr(0,0,str(type(self.key)))
         self.key = scr.getkey()
         self.pressed_a_key() # }}}
 
-    """
     # display tiles
     def display_tiles(self, scr):
         h,w = scr.getmaxyx()
         # background
-       """ 
+        for i in range(2, int(h//2)-2):
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
 
+        for i in range(int(h//2)+2, h-3):
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
     # press a key
     def pressed_a_key(self): # {{{
         arrows = ('KEY_UP', 'KEY_DOWN', "KEY_RIGHT", "KEY_LEFT")
