@@ -9,6 +9,7 @@ class Menu:
         curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
         self.xy = [0,0]
+        self.content = {"start": [f"{time.time()}", f"{time.strftime('%D %H:%M:%S')}"]}
         self.main(scr)
 
     def main(self, scr):
@@ -37,6 +38,9 @@ class Menu:
         for i in range(2, int(h//2)-2):
             scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
             scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
+
+        scr.addstr(3, 3, self.content["start"][0], curses.color_pair(2))
+        scr.addstr(3, w//2+5, self.content["start"][1], curses.color_pair(2))
 
         for i in range(int(h//2)+2, h-3):
             scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
