@@ -3,12 +3,15 @@ import time
 import sys
 import inspect
 
+from modules.todolist import Todolist
+from modules.snake import Snake
 
 class Menu:
     def __init__(self,scr):
         curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
         curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        #self.key="a"
         self.xy = [0,0]
         self.content = {
                 "start": [f"{time.time()}", 
@@ -36,7 +39,7 @@ class Menu:
         #scr.addstr(0,0,f"{ord(self.key)}")
         #scr.addstr(0,0,str(type(self.key)))
         self.key = scr.getkey()
-        self.pressed_a_key() # }}}
+        self.pressed_a_key(scr) # }}}
 
     # display tiles
     def display_tiles(self, scr):
@@ -64,7 +67,7 @@ class Menu:
             scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
 
     # press a key
-    def pressed_a_key(self): # {{{
+    def pressed_a_key(self,scr): # {{{
         arrows = ('KEY_UP', 'KEY_DOWN', "KEY_RIGHT", "KEY_LEFT")
         if self.key in arrows:
 
@@ -90,6 +93,14 @@ class Menu:
         # ESCAPE key
         elif ord(self.key) == 27:
             sys.exit() # }}}
+        
+        # ENTER key
+        elif ord(self.key) == 10:
+            if self.xy[0] == 1:
+                Todolist(scr)
+
+            if self.xy[0] == 2:
+                Snake(scr)
 
     # clear board
     def clear_board(self, scr): #{{{
