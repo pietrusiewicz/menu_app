@@ -42,7 +42,7 @@ class Menu:
         self.pressed_a_key(scr) # }}}
 
     # display tiles
-    def display_tiles(self, scr):
+    def display_tiles(self, scr): #{{{
         h,w = scr.getmaxyx()
         key = list(self.content.keys())[self.xy[0]]
         # render first row of tiles
@@ -64,7 +64,7 @@ class Menu:
             scr.addstr(h//2+5+i, 3, f"{line:{w//2-6}}", curses.color_pair(2))
 
         for i, line in enumerate(self.content[key][2]):
-            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
+            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2)) #}}}
 
     # press a key
     def pressed_a_key(self,scr): # {{{
@@ -92,7 +92,7 @@ class Menu:
 
         # ESCAPE key
         elif ord(self.key) == 27:
-            sys.exit() # }}}
+            sys.exit()
         
         # ENTER key
         elif ord(self.key) == 10:
@@ -100,7 +100,7 @@ class Menu:
                 Todolist(scr)
 
             if self.xy[0] == 2:
-                Snake(scr)
+                Snake(scr) # }}}
 
     # clear board
     def clear_board(self, scr): #{{{
