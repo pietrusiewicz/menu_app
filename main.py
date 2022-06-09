@@ -1,110 +1,111 @@
 import curses
+import time
 import sys
+import inspect
 
 from modules.todolist import Todolist
 from modules.snake import Snake
-from modules.text_reader import Reader
-
-from config.select_file import Select
-from config.database import Database
 
 class Menu:
-    def __init__(self, scr):
-        self.apps = ['todolist', 'text_reader','snake', 'exit']
-        self.y = 0
-        self.d = Database()
+    def __init__(self,scr):
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        #self.key="a"
+        self.xy = [0,0]
+        self.content = {
+                "start": [f"{time.time()}", 
+                 f"{time.strftime('%D %H:%M:%S')}", 
+                 inspect.getdoc(time.time).split('\n')],
+                "todolist": ["lorem", "ipsum", "kurua"],
+                "snake": ["Let's play", "ale ja nie", "ale ja tak"]
+            }
         self.main(scr)
-    
 
     def main(self, scr):
-        w = scr.getmaxyx()[1]//9
-        # selected
-        curses.init_pair(1, curses.COLOR_BLACK, curses.COLOR_WHITE)
+        while True:
+            self.display_menu(scr)
 
-        for i in range(len(self.apps)):
-            if i == self.y:
-                scr.addstr(i, 0, self.apps[i], curses.color_pair(1))
-            else:
-                scr.addstr(i, 0, self.apps[i])
+    # display menu
+    def display_menu(self,scr): # {{{
+        self.clear_board(scr)
+        menu_str = "/0) start /1) todolist /2) snake"
+        scr.addstr(0,0,menu_str, curses.color_pair(1))
+        if self.xy[1] == 0:
+            start_index = menu_str.find(str(self.xy[0]))-1
+            end_index = menu_str.find(str(self.xy[0]+1))-2
+            scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
+        self.display_tiles(scr)
+        #scr.addstr(0,0,f"{ord(self.key)}")
+        #scr.addstr(0,0,str(type(self.key)))
+        self.key = scr.getkey()
+        self.pressed_a_key(scr) # }}}
 
-        # press any key
-        key = scr.getkey() # {{{
-        if key in ("KEY_UP", "KEY_DOWN"):
-            if key == "KEY_UP" and self.y>0:
-                self.y -= 1
-            if key == "KEY_DOWN" and self.y+1<len(self.apps):
-                self.y += 1
-            self.main(scr)
+    # display tiles
+    def display_tiles(self, scr):
+        h,w = scr.getmaxyx()
+        key = list(self.content.keys())[self.xy[0]]
+        # render first row of tiles
+        for i in range(2, int(h//2)-2):
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
 
+        # first row of tiles
+        scr.addstr(3, 3, self.content[key][0], curses.color_pair(2))
+        scr.addstr(3, w//2+5, self.content[key][1], curses.color_pair(2))
 
-        # enter a program
-        elif key in ('\n', "KEY_RIGHT"): # {{{
-            if self.y==0:
-                #t = Todolist(scr)
+        # render second row of tiles
+        for i in range(int(h//2)+2, h-3):
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
+
+        # second row of tiles
+        for i, line in enumerate(self.content[key][2]):
+            scr.addstr(h//2+5+i, 3, f"{line:{w//2-6}}", curses.color_pair(2))
+
+        for i, line in enumerate(self.content[key][2]):
+            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
+
+    # press a key
+    def pressed_a_key(self,scr): # {{{
+        arrows = ('KEY_UP', 'KEY_DOWN', "KEY_RIGHT", "KEY_LEFT")
+        if self.key in arrows:
+
+            choice = arrows.index(self.key)
+            """
+            # UP
+            if choice == 0:
+                self.xy[1] -= 1
+
+            # DOWN
+            if choice == 1:
+                self.xy[1] += 1
+            """
+
+            # RIGHT
+            if choice == 2 and self.xy[0] < 4:
+                self.xy[0] += 1
+
+            # LEFT
+            if choice == 3 and self.xy[0] > 0:
+                self.xy[0] -= 1
+
+        # ESCAPE key
+        elif ord(self.key) == 27:
+            sys.exit() # }}}
+        
+        # ENTER key
+        elif ord(self.key) == 10:
+            if self.xy[0] == 1:
                 Todolist(scr)
-                #t.main(scr)
 
-            if self.y==2:
-                self.reader(scr)
-
-            if self.y==3:
-                #s = Snake(scr)
+            if self.xy[0] == 2:
                 Snake(scr)
-                #s.main(scr)
-            if self.y==len(self.apps)-1:
-                curses.endwin()
-                sys.exit()
-            self.main(scr) # }}}
-        else:
-            self.main(scr)
-        #scr.addstr(15, 15, f'{self.apps[self.y]} {self.y}')
-        # }}}
 
-# READER ======================================================================================={{{
-    def reader(self, scr):
-        self.d.table_name='texts'
-        r = Reader()
-        s = Select()
-        # first time launch
-        if self.d.just_created(): # {{{
-            file_name = s.get_filename(scr)
-            text = r.get_text(file_name)
-            self.d.insert_into([file_name,text, 0, 1]) # }}}
+    # clear board
+    def clear_board(self, scr): #{{{
+        h,w = scr.getmaxyx()
+        for i in range(h-1):
+            scr.addstr(i,0,f"{' ':{w-1}}") # }}}
 
-        t = self.d.select(where="WHERE last_open=1")[0]
-        i = 0
-        r.page_lines = 3
-        r.content = t[1].split('.')
-        self.loop=True
-        while self.loop:
-            # nr sentence, content
-            nr_sentence = int(t[2]+i)
-
-            # display content
-            r.clear_board(scr)
-            r.read(scr, nr_sentence)
-
-
-            key = scr.getkey()
-            if key == 'KEY_DOWN': # {{{
-                i += 1
-            if key == 'KEY_UP':
-                i -= 1
-            if key == 'KEY_RIGHT':
-                i += r.page_lines
-            if key == 'KEY_LEFT':
-                i -= r.page_lines # }}}
-            # exit
-            if key == 'q':
-                self.loop = False
-            # change read file
-            if key == '0':
-                #(text_pwd text, content text, nr_sentence real, last_open real)
-                old_name = file_name
-                r.files = self.d.select(cols='text_pwd')
-                file_name = r.select_file_to_read(scr)
-                self.d.update_row('last_open', 0, f"WHERE text_pwd='{old_name}'")
-# ==============================================================================================}}}
-
-if __name__ == '__main__':
-    curses.wrapper(Menu)
+curses.wrapper(Menu)
