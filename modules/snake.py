@@ -80,7 +80,7 @@ class Snake:
         self.snake_when_going()
         scr.addstr(self.fruit[1], self.fruit[0], '0', curses.color_pair(2))
         for x,y in self.snake:
-            scr.addstr(y,x,'=', curses.color_pair(1))
+            scr.addstr(y,x,' ', curses.color_pair(1))
         scr.addstr(h-1,0, f"{len(self.snake)}, {self.fruit}, {self.direction}, {self.difference_seconds()}", curses.color_pair(2))
         scr.addstr(self.xy[1], self.xy[0], '', curses.color_pair(1))
 
