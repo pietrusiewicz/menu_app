@@ -15,6 +15,7 @@ class Todolist:
     # main loop
     def main(self, scr): # {{{
         "docstring of method"
+
         # colors in program
         self.program_colors(scr)
         line, self.program = "", True
@@ -31,10 +32,10 @@ class Todolist:
 
             # display last line
             self.clrdis_line(scr, f"+)", h=len(self.d))
+
             # display options
             if self.y == len(self.d):
                 self.clrdis_line(scr, "press LETTER KEY to start write", h=len(self.d)+1)
-
             else:
                 self.clrdis_line(scr, "[d]elete [e]dit [c]lear", h=len(self.d)+1) # }}}
 
@@ -178,4 +179,4 @@ class Todolist:
     # }}}------------------------------------------------------------------------------------------
 
 #curses.wrapper(Todolist)
-print(Todolist.main.__doc__)
+#print(Todolist.main.__doc__)
