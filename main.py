@@ -8,36 +8,45 @@ from modules.snake import Snake
 
 class Menu:
     def __init__(self,scr):
-        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
-        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
-        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
         #self.key="a"
         self.xy = [0,0]
         self.content = {
                 "start": [f"{time.time()}", 
                  f"{time.strftime('%D %H:%M:%S')}", 
                  inspect.getdoc(time.time).split('\n')],
-                "todolist": ["lorem", "ipsum", "kurua"],
-                "snake": ["Let's play", "ale ja nie", "ale ja tak"]
+                "todolist": ["I don't know", "what do you have to do", ["press enter", "and check"]],
+                "snake": ["Let's play", "Press enter to play", ['snake waits to', 'sssssss']]
             }
         self.main(scr)
 
-    def main(self, scr):
+    # menu what displayes menu
+    def main(self, scr): # {{{
         while True:
-            self.display_menu(scr)
+            curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+            curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+            curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+            self.display_menu(scr) # }}}
 
     # display menu
     def display_menu(self,scr): # {{{
         self.clear_board(scr)
+
+        # display topbar
         menu_str = "/0) start /1) todolist /2) snake"
         scr.addstr(0,0,menu_str, curses.color_pair(1))
-        if self.xy[1] == 0:
+
+        # moving in topbar
+        if self.xy[1] == 0: # {{{
             start_index = menu_str.find(str(self.xy[0]))-1
             end_index = menu_str.find(str(self.xy[0]+1))-2
-            scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
+            scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2)) # }}}
+
+        # execute func in 54 line
         self.display_tiles(scr)
         #scr.addstr(0,0,f"{ord(self.key)}")
         #scr.addstr(0,0,str(type(self.key)))
+
+        # press a key (execute func in 79 line)
         self.key = scr.getkey()
         self.pressed_a_key(scr) # }}}
 
