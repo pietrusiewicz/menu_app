@@ -1,7 +1,7 @@
 import curses
 import time
 import sys
-import inspect
+#import inspect
 
 from modules.todolist import Todolist
 from modules.snake import Snake
@@ -13,7 +13,7 @@ class Menu:
         self.content = {
                 "start": [f"{time.time()}", 
                  f"{time.strftime('%D %H:%M:%S')}", 
-                 inspect.getdoc(time.time).split('\n')],
+                 time.time.__doc__.split('\n')],
                 "todolist": ["I don't know", "what do you have to do", ["press enter", "and check"]],
                 "snake": ["Let's play", "Press enter to play", ['snake waits to', 'sssssss']]
             }
