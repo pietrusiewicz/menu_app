@@ -4,37 +4,36 @@ import json
 
 class Menu:
     def __init__(self,scr):
-        self.tree = { '/':[] }
-        self.get_tree('/')
+        self.tree = {}
+        self.get_tree('/etc')
 
 
     def get_tree(self, path):
-        ""
-        #self.tree[pwd] = []
-        # enter to inheritance dict
-        d = self.tree['/']
+        "returns pwd files as tree for path"
+        dirs = path.split('/')#[1:]
+        dirs[0] = '/'
 
-        # directories in path
-        dirs = path.split('/')
-        #lines = list(filter(str, dirs[:-1]))
-        #print(dirs)
-        #for line in lines:
-            #print(line)
-        #    d = d[line]
+        # go to path in self.tree
+        d = self.tree
+        for line in dirs:
+            if type(d) == list:
+                if line not in d:
+                    d.append( {line:[]} )
+                l = list(map(lambda x: list(x.keys())[0] if type(x)==dict else x, d)) 
+                i = l.index(line)
+                print(i)
+                d = d[i]
+            elif line not in self.tree.keys():
+                d[line] = []
+                d = d[line]
+            else:
+                d = d[line]
 
-        #d = self.tree[pwd]
-
-        # files in path
-        for line in os.listdir(path):
-            try:
-                if os.path.isdir(path+line):
-                    d.append({ line:[] })
-                    #self.get_tree(path+line)
-                else:
-                    #print(d)
-                    d.append(line)
-            except PermissionError:
-                continue
+        for f in os.listdir(path):
+            if os.path.isdir(path+f):
+                d.append( { f:[] } )
+            else:
+                d.append( f )
 
 
 #curses.wrapper(Menu)
