@@ -16,23 +16,33 @@ class Menu:
         # go to path in self.tree
         d = self.tree
         for key in dirs:
-            if type(d) == dict:
-                d[key] = []
-            if type(d) == list:
-                if key not in d:
-                    d.append( {key: []} )
-                l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
-                d = d[l.index(key)]
-
+            if key not in list(d):
+                if type(d) == dict:
+                    d[key] = []
+                if type(d) == list:
+                    l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
+                    if key not in l:
+                        d.append( {key: []} )
+                    l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
+                    d = d[l.index(key)]
+            #d = [i for n, i in enumerate(d) if i not in d[n + 1:]]
             d = d[key]
-                #l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
+        #print(self.tree)
+
 
         for f in os.listdir(path):
-            if os.path.isdir(path+f):
-                d.append( { f: [] } )
-            else:
-                d.append( f )
+            try:
+                if os.path.isdir(path+'/'+f):
+                    #d.append( { f: [] } )
+                    self.get_tree(path+'/'+f)
+                else:
+                    d.append( f )
+                    #print(path+'/'+f)
+            except PermissionError:
+                continue
 
+    def delete_duplicats(self):
+        pass
 
 #curses.wrapper(Menu)
 m = Menu('a')
