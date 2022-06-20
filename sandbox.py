@@ -5,7 +5,6 @@ import json
 class Menu:
     def __init__(self,scr):
         self.tree = {}
-        self.get_tree('/etc')
 
 
     def get_tree(self, path):
@@ -23,8 +22,10 @@ class Menu:
                     l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
                     if key not in l:
                         d.append( {key: []} )
-                    l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
-                    d = d[l.index(key)]
+                        d = d[-1]
+                    else:
+                        l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
+                        d = d[l.index(key)]
             #d = [i for n, i in enumerate(d) if i not in d[n + 1:]]
             d = d[key]
         #print(self.tree)
@@ -41,10 +42,11 @@ class Menu:
             except PermissionError:
                 continue
 
-    def delete_duplicats(self):
-        pass
 
-#curses.wrapper(Menu)
-m = Menu('a')
-#print(m.tree)
-print(json.dumps(m.tree, indent=5))
+if __name__ == '__main__':
+    #curses.wrapper(Menu)
+    m = Menu('a')
+    m.get_tree('/etc')
+    m.get_tree('/home')
+    #print(m.tree)
+    print(json.dumps(m.tree, indent=5))
