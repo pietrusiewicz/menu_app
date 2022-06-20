@@ -15,23 +15,21 @@ class Menu:
 
         # go to path in self.tree
         d = self.tree
-        for line in dirs:
+        for key in dirs:
+            if type(d) == dict:
+                d[key] = []
             if type(d) == list:
-                if line not in d:
-                    d.append( {line:[]} )
-                l = list(map(lambda x: list(x.keys())[0] if type(x)==dict else x, d)) 
-                i = l.index(line)
-                print(i)
-                d = d[i]
-            elif line not in self.tree.keys():
-                d[line] = []
-                d = d[line]
-            else:
-                d = d[line]
+                if key not in d:
+                    d.append( {key: []} )
+                l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
+                d = d[l.index(key)]
+
+            d = d[key]
+                #l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
 
         for f in os.listdir(path):
             if os.path.isdir(path+f):
-                d.append( { f:[] } )
+                d.append( { f: [] } )
             else:
                 d.append( f )
 
