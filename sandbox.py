@@ -6,8 +6,9 @@ import json
 class Snapshot:
     "it does snapshot for selected directories"
 
-    def __init__(self,scr):
+    def __init__(self,scr, ls=[]):
         self.tree = {}
+        [self.get_tree(d) for d in ls]
 
     # tree about selected path
     def get_tree(self, path): # {{{
@@ -57,8 +58,6 @@ class Snapshot:
 
 if __name__ == '__main__':
     #curses.wrapper(Menu)
-    s = Snapshot('a')
-    s.get_tree('/etc')
-    s.get_tree('/home')
+    s = Snapshot('a', ['/home','/etc'])
     #print(m.tree)
-    print(json.dumps(m.tree, indent=5))
+    print(json.dumps(s.tree, indent=5))
