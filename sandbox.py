@@ -2,36 +2,48 @@ import curses
 import os
 import json
 
-class Menu:
+
+class Snapshot:
+    "it does snapshot for selected directories"
+
     def __init__(self,scr):
         self.tree = {}
 
+    # tree about selected path
+    def get_tree(self, path): # {{{
+        "It does tree of selected directories"
 
-    def get_tree(self, path):
-        "returns pwd files as tree for path"
+        # list of directories for path
         dirs = path.split('/')#[1:]
         dirs[0] = '/'
 
         # go to path in self.tree
         d = self.tree
-        for key in dirs:
+
+        # make json' tree through dirs (17 line)
+        for key in dirs: # {{{
+            # if path doesn't exist
             if key not in list(d):
+                # is it new?
                 if type(d) == dict:
                     d[key] = []
-                if type(d) == list:
+
+                # is it exists?
+                if type(d) == list: # {{{
                     l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
                     if key not in l:
                         d.append( {key: []} )
                         d = d[-1]
                     else:
                         l = list(map(lambda x : list(x)[0] if type(x) == dict else x, d))
-                        d = d[l.index(key)]
-            #d = [i for n, i in enumerate(d) if i not in d[n + 1:]]
-            d = d[key]
-        #print(self.tree)
+                        d = d[l.index(key)] # }}}
+
+            # go to the next dir
+            d = d[key] # }}}
 
 
-        for f in os.listdir(path):
+        # creating list in dict (directory) or string (file)
+        for f in os.listdir(path): # {{{
             try:
                 if os.path.isdir(path+'/'+f):
                     #d.append( { f: [] } )
@@ -40,13 +52,13 @@ class Menu:
                     d.append( f )
                     #print(path+'/'+f)
             except PermissionError:
-                continue
-
+                continue # }}}
+    # }}}
 
 if __name__ == '__main__':
     #curses.wrapper(Menu)
-    m = Menu('a')
-    m.get_tree('/etc')
-    m.get_tree('/home')
+    s = Snapshot('a')
+    s.get_tree('/etc')
+    s.get_tree('/home')
     #print(m.tree)
     print(json.dumps(m.tree, indent=5))
