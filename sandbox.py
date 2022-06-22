@@ -56,8 +56,11 @@ class Snapshot:
                 continue # }}}
     # }}}
 
+    def get_json(self):
+        return json.dumps(self.tree, indent=5)
+
 if __name__ == '__main__':
     #curses.wrapper(Menu)
     s = Snapshot('a', ['/home','/etc'])
     #print(m.tree)
-    print(json.dumps(s.tree, indent=5))
+    #print(json.dumps(s.tree, indent=5))
