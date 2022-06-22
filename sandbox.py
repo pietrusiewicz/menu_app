@@ -61,10 +61,8 @@ class Snapshot:
         return json.dumps(self.tree, indent=5)
 
     def save_json(self):
-        try:
-            os.listdir('files')
-        except FileNotFoundError:
-            os.mkdir('files')
+        if 'files' not in os.listdir():
+            os.mkdir('files') 
         name = time.strftime("%Y%m%d%H%M%S")
         f = open(f'files/{name}.json', 'w')
         json.dump(self.tree, f, indent=5)
