@@ -68,9 +68,15 @@ class Snapshot:
         json.dump(self.tree, f, indent=5)
         #f.save()
 
+    def comparsion_old2new(self):
+        if len(os.listdir('files')) >= 2:
+            old, new = sorted(os.listdir('files'))[-2:]
+            print(old,new)
+
 if __name__ == '__main__':
     #curses.wrapper(Menu)
     s = Snapshot('a', ['/home','/etc'])
     s.save_json()
+    s.comparsion_old2new()
     #print(m.tree)
     #print(json.dumps(s.tree, indent=5))
