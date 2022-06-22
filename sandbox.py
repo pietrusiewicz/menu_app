@@ -1,6 +1,7 @@
 import curses
 import os
 import json
+import time
 
 
 class Snapshot:
@@ -56,11 +57,22 @@ class Snapshot:
                 continue # }}}
     # }}}
 
-    def get_json(self):
+    def print_json(self):
         return json.dumps(self.tree, indent=5)
+
+    def save_json(self):
+        try:
+            os.listdir('files')
+        except FileNotFoundError:
+            os.mkdir('files')
+        name = time.strftime("%Y%m%d%H%M%S")
+        f = open(f'files/{name}.json', 'w')
+        json.dump(self.tree, f, indent=5)
+        #f.save()
 
 if __name__ == '__main__':
     #curses.wrapper(Menu)
     s = Snapshot('a', ['/home','/etc'])
+    s.save_json()
     #print(m.tree)
     #print(json.dumps(s.tree, indent=5))
