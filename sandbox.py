@@ -10,6 +10,9 @@ class Snapshot:
     def __init__(self,scr, ls=[]):
         self.tree = {}
         [self.get_tree(d) for d in ls]
+        self.path = []
+        self.s1,self.s2 = set(), set()
+        #self.l1,self.l2 = [], []
 
     # tree about selected path
     def get_tree(self, path): # {{{
@@ -60,23 +63,72 @@ class Snapshot:
     def print_json(self):
         return json.dumps(self.tree, indent=5)
 
-    def save_json(self):
+    def save_json(self): # {{{
         if 'files' not in os.listdir():
             os.mkdir('files') 
         name = time.strftime("%Y%m%d%H%M%S")
         f = open(f'files/{name}.json', 'w')
-        json.dump(self.tree, f, indent=5)
+        json.dump(self.tree, f, indent=5) # }}}
         #f.save()
 
-    def comparsion_old2new(self):
-        if len(os.listdir('files')) >= 2:
-            old, new = sorted(os.listdir('files'))[-2:]
-            print(old,new)
+    def prepare2comparsion(self, d1, d2):
+        """
+        func gets 2 dicts
+        """
+        self.convert_dict2list(d1, 1)
+        self.convert_dict2list(d2, 2)
+
+    def convert_dict2list(self, d, n):
+        s = self.s1 if n == 1 else self.s2
+        for key in d:
+            self.path.append(key)
+            for i in range(len(d[key])):
+                #print(type(d[k][i]))
+                if type(d[key][i]) == dict:
+                    self.convert_dict2list(d[key][i], n)
+                    #s.append(f"/{'/'.join(self.path[1:])}")
+                    s.add(f"{'/'.join(self.path)}")
+                else:
+                    #s.append(f"/{'/'.join(self.path[1:])}/{d[key][i]}")
+                    s.add(f"{'/'.join(self.path)}/{d[key][i]}")
+                    #self.s1.add('/'+'/'.join(self.path[1:])+d[k][i])
+                self.path[:-1]
+
+            #print(self.path)
+            
+            self.path[:-1]
+    
+    def compare(self):
+        self.s1,self.s2 = set(), set()
+
+        gen = (x for x in self.l1)
+        for i in range(len(self.l1)):
+            item = next(gen)
+            if item not in self.l2:
+                self.s1.add(item)
+
+
+        gen = (x for x in self.l2)
+        for i in range(len(self.l2)):
+            item = next(gen)
+            if item not in self.l1:
+                self.s2.add(item)
 
 if __name__ == '__main__':
     #curses.wrapper(Menu)
-    s = Snapshot('a', ['/home','/etc'])
+    s = Snapshot('a', ['/etc'])
     s.save_json()
-    s.comparsion_old2new()
+    if len(os.listdir('files')) >= 2:
+        d1,d2 = map(lambda x: json.load(open(f"files/{x}", encoding='utf-8')), sorted(os.listdir('files'))[-2:])
+        s.prepare2comparsion(d1, d2)
+        #s.compare()
+        #s.prepare2comparsion(d2)
+        print(len(s.s2-s.s1))
+        #print(len(s.s2.difference(s.s1)))
+        #print(len(s.s2),len(s.s1))
+        #print(len(s.l1), len(s.l2))
+        #print(s.s2.difference(s.s1))
+        #print(s.s2)
+
     #print(m.tree)
     #print(json.dumps(s.tree, indent=5))
