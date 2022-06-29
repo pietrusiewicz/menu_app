@@ -7,13 +7,14 @@ class Todolist:
 
 
     # declaring program variables 
-    def __init__(self, scr): # {{{
+    def __init__(self, scr): # ############################################## {{{
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
-        self.main(scr) # }}}
+        self.main(scr) 
+    # ####################################################################### }}}
 
     # main loop
-    def main(self, scr): # {{{
+    def main(self, scr): #################################################### {{{
         "docstring of method"
 
         # colors in program
@@ -51,7 +52,7 @@ class Todolist:
 
 
             # press a key
-            # {{{----------------------------------------------------------------------------------
+# {{{----------------------------------------------------------------------------------
             pressed_key = scr.getkey()
 
             # press arrow 
@@ -70,12 +71,13 @@ class Todolist:
             # press a letter
             elif pressed_key.lower() in self.a_z: # {{{
                 self.press_letter(scr,pressed_key.lower()) # }}}
-            # }}}----------------------------------------------------------------------------------
 
-        # }}} 
+# }}}----------------------------------------------------------------------------------
+
+############################################################################ }}}
 
     # press a letter
-    def press_letter(self, scr, pressed_key): # {{{
+    def press_letter(self, scr, pressed_key): # ############################ {{{
 
         # press an letter
         # keybinds {{{-----------------------------------------------------------------------------
@@ -107,18 +109,19 @@ class Todolist:
         elif len(self.d) == self.y: # {{{
             # pressed_key is first letter
             self.insert_mode(scr, pressed_key) # }}}
-    # }}}
+############################################################################ }}}
 
     # clear and display line
-    def clrdis_line(self, scr, line, n=1, h=0): # {{{
+    def clrdis_line(self, scr, line, n=1, h=0): ############################ {{{
         w = (scr.getmaxyx()[1]//9)*2
         scr.addstr(h, w, f"{'':{scr.getmaxyx()[1]-w}}", curses.color_pair(n))
         #statusbar = (curses.color_pair(n) | curses.A_UNDERLINE)
-        scr.addstr(h, w, f"{line}", curses.color_pair(n)) # }}}
+        scr.addstr(h, w, f"{line}", curses.color_pair(n)) 
+############################################################################ }}}
 
     # insert mode
-    def insert_mode(self, scr, item=''): # {{{
-        "docstring of method enter_item"
+    def insert_mode(self, scr, item=''): ################################### {{{
+        "insert like vim"
         
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
 
@@ -136,6 +139,7 @@ class Todolist:
         # press letter
         elif key in self.a_z: # {{{
             self.insert_mode(scr, item+key) # }}}
+
         # press enter
         elif key in '\n': # {{{
             if item in list(self.d):
@@ -152,23 +156,25 @@ class Todolist:
                     self.d[item] = self.d.pop(oldkey) 
                 self.y += 1
                 scr.addstr(scr.getmaxyx()[0]-1, 0, "SELECT")
-        # }}}
-    # }}}------------------------------------------------------------------------------------------
+                #}}}
+############################################################################## }}}
 
     # press an arrow
-    def press_an_arrow(self, key): # {{{
+    def press_an_arrow(self, key): ########################################## {{{
         "docstring press arrow"
         if key == 'KEY_UP' and self.y > 0:
             self.y -= 1
+
         if key == 'KEY_DOWN' and self.y < len(self.d):
             self.y += 1
+
         if key == 'KEY_LEFT':
             self.program=False
-    # }}}------------------------------------------------------------------------------------------
+############################################################################# }}}
 
     # colors in program
-    # {{{ -----------------------------------------------------------------------------------------
-    def program_colors(self, scr):
+    
+    def program_colors(self, scr):####################################################################### {{{
         curses.init_pair(1, curses.COLOR_YELLOW, curses.COLOR_BLACK)
         curses.init_pair(2, curses.COLOR_GREEN, curses.COLOR_BLACK)
         curses.init_pair(3, curses.COLOR_BLACK, curses.COLOR_WHITE)
@@ -176,7 +182,7 @@ class Todolist:
         curses.init_pair(5, curses.COLOR_GREEN, curses.COLOR_YELLOW)
         curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_GREEN)
         curses.init_pair(7, curses.COLOR_BLACK, curses.COLOR_WHITE)
-    # }}}------------------------------------------------------------------------------------------
+########################################################################### }}}
 
 #curses.wrapper(Todolist)
 #print(Todolist.main.__doc__)
