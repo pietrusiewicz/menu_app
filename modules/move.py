@@ -3,7 +3,7 @@ class Move:
         self.x, self.y = 0,0
         self.b = block
 
-    def press_key(scr):
+    def press_key(self, scr):
         k = scr.getkey()
         if k in ['KEY_RIGHT', 'KEY_LEFT', 'KEY_UP', 'KEY_DOWN']:
             if k == 'KEY_UP' and self.b==1:

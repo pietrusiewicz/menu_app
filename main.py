@@ -1,22 +1,27 @@
 import curses
 import time
 import sys
-#import inspect
+import json
+import os
 
 from modules.todolist import Todolist
 from modules.snake import Snake
+from modules.snapshot_ls import Snapshot
+from modules.move import Move
 
 class Menu:
     def __init__(self,scr):
         #self.key="a"
-        self.xy = [0,0]
-        self.content = {
+        self.m = Move(0)
+        # content
+        self.content = { # {{{
                 "start": [f"{time.time()}", 
                  f"{time.strftime('%D %H:%M:%S')}", 
                  time.time.__doc__.split('\n')],
                 "todolist": ["I don't know", "what do you have to do", ["press enter", "and check"]],
-                "snake": ["Let's play", "Press enter to play", ['snake waits to', 'sssssss']]
-            }
+                "snake": ["Let's play", "Press enter to play", ['snake waits to', 'sssssss']],
+                "snapshot_ls": ["snapshots paths","like you want", ["",""]]
+            } # }}}
         self.main(scr)
 
     # menu what displayes menu
@@ -32,28 +37,30 @@ class Menu:
         self.clear_board(scr)
 
         # display topbar
-        menu_str = "/0) start /1) todolist /2) snake"
+        menu_str = "/0) start /1) todolist /2) snake /3) snapshot_ls"
         scr.addstr(0,0,menu_str, curses.color_pair(1))
 
-        # moving in topbar
-        if self.xy[1] == 0: # {{{
-            start_index = menu_str.find(str(self.xy[0]))-1
-            end_index = menu_str.find(str(self.xy[0]+1))-2
+        # mark selected option
+        if self.m.y == 0: # {{{
+            start_index = menu_str.find(str(self.m.x))-1
+            end_index = menu_str.find(str(self.m.x+1))-2
             scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2)) # }}}
 
         # execute func in 54 line
         self.display_tiles(scr)
-        #scr.addstr(0,0,f"{ord(self.key)}")
-        #scr.addstr(0,0,str(type(self.key)))
 
-        # press a key (execute func in 79 line)
-        self.key = scr.getkey()
-        self.pressed_a_key(scr) # }}}
+        # press a key (execute func in 87 line)
+        self.key = self.m.press_key(scr)
+        if self.key:
+            self.pressed_a_key(scr)
+
+
+        # }}}
 
     # display tiles
     def display_tiles(self, scr): #{{{
         h,w = scr.getmaxyx()
-        key = list(self.content.keys())[self.xy[0]]
+        key = list(self.content.keys())[self.m.x]
         # render first row of tiles
         for i in range(2, int(h//2)-2):
             scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
@@ -75,41 +82,34 @@ class Menu:
         for i, line in enumerate(self.content[key][2]):
             scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2)) #}}}
 
+
     # press a key
     def pressed_a_key(self,scr): # {{{
-        arrows = ('KEY_UP', 'KEY_DOWN', "KEY_RIGHT", "KEY_LEFT")
-        if self.key in arrows:
-
-            choice = arrows.index(self.key)
-            """
-            # UP
-            if choice == 0:
-                self.xy[1] -= 1
-
-            # DOWN
-            if choice == 1:
-                self.xy[1] += 1
-            """
-
-            # RIGHT
-            if choice == 2 and self.xy[0] < 4:
-                self.xy[0] += 1
-
-            # LEFT
-            if choice == 3 and self.xy[0] > 0:
-                self.xy[0] -= 1
 
         # ESCAPE key
-        elif ord(self.key) == 27:
+        if ord(self.key) == 27:
             sys.exit()
         
         # ENTER key
         elif ord(self.key) == 10:
-            if self.xy[0] == 1:
+            if self.m.x == 1:
                 Todolist(scr)
 
-            if self.xy[0] == 2:
-                Snake(scr) # }}}
+            if self.m.x == 2:
+                Snake(scr) 
+
+            if self.m.x == 3:
+                os.chdir('modules')
+                if 'config.json' not in os.listdir():
+                    json.dump({},open('config.json', 'w'))
+                d = json.load(open('config.json'))
+                if 'snapshot_ls' not in d:
+                    d['snapshot_ls'] = []
+                s = Snapshot(d['snapshot_ls'])
+                s.config_app(scr)
+                os.chdir('..')
+            # }}}
+
 
     # clear board
     def clear_board(self, scr): #{{{
