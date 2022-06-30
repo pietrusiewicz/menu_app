@@ -10,9 +10,8 @@ from modules.snapshot_ls import Snapshot
 from modules.move import Move
 
 class Menu:
-    def __init__(self,scr):
-        #self.key="a"
-        self.m = Move(0)
+    def __init__(self): #{{{ 
+        self.m = Move()
         # content
         self.content = { # {{{
                 "start": [f"{time.time()}", 
@@ -22,7 +21,7 @@ class Menu:
                 "snake": ["Let's play", "Press enter to play", ['snake waits to', 'sssssss']],
                 "snapshot_ls": ["snapshots paths","like you want", ["",""]]
             } # }}}
-        self.main(scr)
+##############################################################################}}}
 
     # menu what displayes menu
     def main(self, scr): # {{{
@@ -30,11 +29,12 @@ class Menu:
             curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
             curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
             curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
-            self.display_menu(scr) # }}}
+            self.display_menu(scr) 
+############################################################################# }}}
 
     # display menu
     def display_menu(self,scr): # {{{
-        self.clear_board(scr)
+        self.m.clear_board(scr)
 
         # display topbar
         menu_str = "/0) start /1) todolist /2) snake /3) snapshot_ls"
@@ -50,15 +50,13 @@ class Menu:
         self.display_tiles(scr)
 
         # press a key (execute func in 87 line)
-        self.key = self.m.press_key(scr)
+        self.key = self.m.press_key(scr, [0,0,self.m.x>0,self.m.x<len(self.content)-1])
         if self.key:
             self.pressed_a_key(scr)
-
-
-        # }}}
+############################################################################## }}}
 
     # display tiles
-    def display_tiles(self, scr): #{{{
+    def display_tiles(self, scr): # {{{
         h,w = scr.getmaxyx()
         key = list(self.content.keys())[self.m.x]
         # render first row of tiles
@@ -80,7 +78,8 @@ class Menu:
             scr.addstr(h//2+5+i, 3, f"{line:{w//2-6}}", curses.color_pair(2))
 
         for i, line in enumerate(self.content[key][2]):
-            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2)) #}}}
+            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2)) 
+############################################################################### }}}
 
 
     # press a key
@@ -93,10 +92,12 @@ class Menu:
         # ENTER key
         elif ord(self.key) == 10:
             if self.m.x == 1:
-                Todolist(scr)
+                t = Todolist(Move())
+                t.main(scr)
 
             if self.m.x == 2:
-                Snake(scr) 
+                s = Snake(Move())
+                s.main(scr)
 
             if self.m.x == 3:
                 os.chdir('modules')
@@ -108,13 +109,10 @@ class Menu:
                 s = Snapshot(d['snapshot_ls'])
                 s.config_app(scr)
                 os.chdir('..')
-            # }}}
+######################################################################## }}}
 
 
-    # clear board
-    def clear_board(self, scr): #{{{
-        h,w = scr.getmaxyx()
-        for i in range(h-1):
-            scr.addstr(i,0,f"{' ':{w-1}}") # }}}
 
-curses.wrapper(Menu)
+if __name__ == '__main__':
+    m = Menu()
+    curses.wrapper(m.main)

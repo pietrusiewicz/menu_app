@@ -3,51 +3,77 @@ import random
 import time
 
 class Snake:
-    def __init__(self, scr):
+    # constructor
+    def __init__(self, m): # {{{
         # beginning values of snake
+        self.m = m
         self.start_time = time.time()
-        h,w = [_//2 for _ in scr.getmaxyx()]
-        self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
-        self.xy, self.fruit = [w, h],[0,0]
         self.direction,self.moves = '',0
-        self.keys = ("KEY_UP","KEY_DOWN","KEY_LEFT","KEY_RIGHT")
-        self.main(scr)
+        self.fruit = [0,0]
+        #self.keys = ("KEY_UP","KEY_DOWN","KEY_LEFT","KEY_RIGHT")
+############################################################ }}}
 
     # main function
     def main(self, scr): # {{{
+        h,w = list(map(lambda x: x//2, scr.getmaxyx()))
+        #h,w = [_//2 for _ in scr.getmaxyx()]
+        self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
+        self.m.x = w
+        self.m.y = h
+        #scr.addstr(0,0, f"{self.m.x,self.m.y}")
+        #self.xy = [w, h]
+
         curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_GREEN)
         curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_YELLOW)
 
         # place a fruit
         self.create_fruit(scr)
-
         while self.game:
-            scr.addstr(self.xy[1], self.xy[0], '')
+            h,w = scr.getmaxyx()
+            self.display_board(scr)
+            #scr.addstr(0,0, '')
+            scr.addstr(0,0, f"{list(self.m.xy())==self.fruit}")
+            scr.addstr(self.m.y, self.m.x, '')
             self.moves += 1
-            key = scr.getkey()
-            # other key pressed 
-            if self.press_key(scr, key):
+            #key = scr.getkey()
+            l1 = list(map(lambda x: self.direction != x, list('nswe')))
+            
+            l2 = [1 if self.m.y > 0 else h-2,
+                 1 if self.m.y < h-2 else '0',
+                 1 if self.m.x > 0 else w-1,
+                 1 if self.m.x < w-1 else '0'
+            ]
+            l3 = list(map(lambda x : sum(list(map(int,x))) == 2, zip(l1,l2)))
+            # pressed arrow
+            if not self.m.press_key(scr, l3):
+                self.direction = 'nswe'[l3.index(1)]
                 continue
+            else:
+                self.press_key()
+            #if self.press_key(scr, key):
 
-            # when snake ate itself
-            if self.xy in self.snake and self.moves > 3: # {{{
+            # GAMEOVER - when snake ate itself
+            if self.m.xy() in self.snake and self.moves > 3: # {{{
                 self.end_screen(scr) # }}}
 
-            # when snake ate fruit
-            if self.xy == self.fruit: # {{{
-                self.snake.append([int(self.xy[0]), int(self.xy[1])])
+            # +1 - when snake ate fruit
+            if self.m.xy() == self.fruit: # {{{
+                self.snake.append([int(self.m.x), int(self.m.y)])
                 self.create_fruit(scr)
-            self.display_board(scr) # }}}
-            # }}}
+            #self.display_board(scr) # }}}
+############################################################ }}}
 
     # press key
-    def press_key(self, scr, key): # {{{
+    def press_key(self): # {{{
         h,w = scr.getmaxyx()
         # enter
         if key == '\n':
             self.game = False
+        else:
+            self.moves -= 1
+            key = ' '
 
-
+        """
         # arrow up
         elif key == 'KEY_UP' and self.direction != 's':
             if self.xy[1] > 0:
@@ -82,14 +108,12 @@ class Snake:
             else:
                 self.xy[0] = 0
             self.direction = 'e' 
-        else:
-            self.moves -= 1
-            key = ' '
 
         # is arrow or it isn't
         key = key not in self.keys
         return key
-        # }}}
+        """
+############################################################################# }}}
 
     # create fruit
     def create_fruit(self, scr): # {{{
@@ -97,11 +121,11 @@ class Snake:
         while True:
             h,w = [int((_-1)*random.random()) for _ in scr.getmaxyx()]
             check = [[x==w, y==h] for x,y in self.snake]
-            #check = [[_[0]==w,_[1]==h] for _ in self.snake]
+
             if [True, True] not in check:
                 break
         self.fruit = [w,h]
-        #scr.addstr(h, w, "0", curses.color_pair(2)) # }}}
+############################################################################# }}}
 
     # display content with snake and bottombar
     def display_board(self, scr): # {{{
@@ -109,7 +133,7 @@ class Snake:
         h,w = scr.getmaxyx()
 
         # clear cli screen
-        self.clear_board(scr)
+        self.m.clear_board(scr)
 
         # strip and stretch snake
         self.snake_when_going()
@@ -123,20 +147,17 @@ class Snake:
 
         # display bottombar
         scr.addstr(h-1,0, f"{len(self.snake)}, {self.fruit}, {self.direction}, {self.difference_seconds()}", curses.color_pair(2))
-        scr.addstr(self.xy[1], self.xy[0], '', curses.color_pair(1)) # }}}
+        scr.addstr(self.m.y, self.m.x, '', curses.color_pair(1))
+############################################################################# }}}
 
-    # clear board
-    def clear_board(self, scr): # {{{
-        h,w = scr.getmaxyx()
-        for y in range(h-1):
-            for x in range(w):
-                scr.addstr(y, x, " ") # }}}
     
     # when snake is going
     def snake_when_going(self): # {{{
         "strip and stretch snake"
         self.snake = self.snake[1:]; 
-        self.snake.append([self.xy[0], self.xy[1]]) # }}}
+        self.snake.append([self.m.x, self.m.y])
+
+############################################################################# }}}
 
     # ending of game
     def end_screen(self, scr): # {{{
@@ -149,9 +170,12 @@ class Snake:
         while True:
             # enter ends game
             if scr.getkey() == '\n':
-                break # }}}
+                break 
+############################################################################# }}}
 
-    def difference_seconds(self):
+    def difference_seconds(self): # {{{
         return int(time.time())-int(self.start_time)
+
+############################################################################# }}}
 
 #curses.wrapper(Snake)

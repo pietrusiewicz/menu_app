@@ -1,16 +1,17 @@
 import curses
 import time
 import sys
+#import move
 
 class Todolist:
     "docstring of class"
 
 
     # declaring program variables 
-    def __init__(self, scr): # ############################################## {{{
+    def __init__(self, m): # ############################################## {{{
+        self.m = m#move.Move(1)
         self.d, self.y={}, 0
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
-        self.main(scr) 
     # ####################################################################### }}}
 
     # main loop
@@ -29,43 +30,46 @@ class Todolist:
                 n = 2 if self.d[item] else 1
                 line = f'{i+1}) {item} | {str(self.d[item]):5}'
                 self.clrdis_line(scr, line, n=n,h=i)
-                scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.y+1}")
+                scr.addstr(scr.getmaxyx()[0]-1, 16, f"{self.m.y+1}")
 
             # display last line
             self.clrdis_line(scr, f"+)", h=len(self.d))
 
             # display options
-            if self.y == len(self.d):
+            if self.m.y == len(self.d):
                 self.clrdis_line(scr, "press LETTER KEY to start write", h=len(self.d)+1)
             else:
                 self.clrdis_line(scr, "[d]elete [e]dit [c]lear", h=len(self.d)+1) # }}}
 
             # display selected item
             selected_is_true = False # {{{
-            if self.y in range(len(self.d)):
-                line = f"{str(self.y+1)+ ')' + list(self.d)[self.y]}"
-                selected_is_true = self.d[list(self.d)[self.y]]
+            if self.m.y in range(len(self.d)):
+                line = f"{str(self.m.y+1)+ ')' + list(self.d)[self.m.y]}"
+                selected_is_true = self.d[list(self.d)[self.m.y]]
             else:
                 line = f"+)"
-                #line = f"{self.y+1})"
-            self.clrdis_line(scr, line, n=5+selected_is_true,h=self.y) # }}}
+                #line = f"{self.m.y+1})"
+            self.clrdis_line(scr, line, n=5+selected_is_true,h=self.m.y) # }}}
 
 
             # press a key
 # {{{----------------------------------------------------------------------------------
-            pressed_key = scr.getkey()
+            #pressed_key = scr.getkey()
+            pressed_key = m.press_key(scr, [self.m.y > 0, self.m.y < len(self.d), 1, 0])
 
+            """
             # press arrow 
-            if pressed_key in ('KEY_UP', 'KEY_DOWN', 'KEY_LEFT', 'KEY_RIGHT'): # {{{
+            if pressed_key in ('KEY_UP', 'KEY_DOWN', 'KEY_LEFT', 'KEY_RIGHT'): 
                 # line 88
-                self.press_an_arrow(pressed_key) # }}}
+                self.press_an_arrow(pressed_key) 
+            """
 
             # press enter
-            elif pressed_key == '\n': # {{{
+            if pressed_key == '\n': # {{{
                 if len(self.d) == 0:
                     self.insert_mode(scr)
-                elif len(self.d) != self.y:
-                    k = list(self.d)[self.y]
+                elif len(self.d) != self.m.y:
+                    k = list(self.d)[self.m.y]
                     self.d[k] = not self.d[k] # }}}
 
             # press a letter
@@ -81,10 +85,10 @@ class Todolist:
 
         # press an letter
         # keybinds {{{-----------------------------------------------------------------------------
-        if self.y in range(len(self.d)):
+        if self.m.y in range(len(self.d)):
             # delete an item
             if pressed_key == 'd': # {{{
-                to_remove = list(self.d)[self.y]
+                to_remove = list(self.d)[self.m.y]
                 self.clrdis_line(scr, f"Are you sure to delete {repr(to_remove)} y/n", h=len(self.d)+1)
 
                 key = scr.getkey().lower()
@@ -97,7 +101,7 @@ class Todolist:
 
             # edit an item
             elif pressed_key == 'e': # {{{
-                self.insert_mode(scr, list(self.d)[self.y]) # }}}
+                self.insert_mode(scr, list(self.d)[self.m.y]) # }}}
 
             # clear an item
             elif pressed_key == 'c': # {{{
@@ -106,7 +110,7 @@ class Todolist:
         # }}}--------------------------------------------------------------------------------------
 
         # add new item
-        elif len(self.d) == self.y: # {{{
+        elif len(self.d) == self.m.y: # {{{
             # pressed_key is first letter
             self.insert_mode(scr, pressed_key) # }}}
 ############################################################################ }}}
@@ -126,9 +130,9 @@ class Todolist:
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
 
         w = (scr.getmaxyx()[1]//9)*2
-        line = f'{self.y+1}){item}'
+        line = f'{self.m.y+1}){item}'
         self.clrdis_line(scr, "press ENTER to end edit an item", h=len(self.d)+1)
-        self.clrdis_line(scr, f'{line}', h=self.y)
+        self.clrdis_line(scr, f'{line}', h=self.m.y)
 
 
         key = scr.getkey()
@@ -148,13 +152,13 @@ class Todolist:
             # exit insert mode 
             else:
                 # create item
-                if len(self.d) == self.y:
+                if len(self.d) == self.m.y:
                     self.d[item] = False
                 # replace item
                 else:
-                    oldkey = list(self.d)[self.y]
+                    oldkey = list(self.d)[self.m.y]
                     self.d[item] = self.d.pop(oldkey) 
-                self.y += 1
+                self.m.y += 1
                 scr.addstr(scr.getmaxyx()[0]-1, 0, "SELECT")
                 #}}}
 ############################################################################## }}}
@@ -162,11 +166,11 @@ class Todolist:
     # press an arrow
     def press_an_arrow(self, key): ########################################## {{{
         "docstring press arrow"
-        if key == 'KEY_UP' and self.y > 0:
-            self.y -= 1
+        if key == 'KEY_UP' and self.m.y > 0:
+            self.m.y -= 1
 
-        if key == 'KEY_DOWN' and self.y < len(self.d):
-            self.y += 1
+        if key == 'KEY_DOWN' and self.m.y < len(self.d):
+            self.m.y += 1
 
         if key == 'KEY_LEFT':
             self.program=False
