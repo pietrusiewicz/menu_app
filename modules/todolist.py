@@ -126,7 +126,7 @@ class Todolist:
     # insert mode
     def insert_mode(self, scr, item=''): ################################### {{{
         "insert like vim"
-        
+
         scr.addstr(scr.getmaxyx()[0]-1, 0, "INSERT")
 
         w = (scr.getmaxyx()[1]//9)*2

@@ -3,6 +3,7 @@ import random
 import time
 
 class Snake:
+
     # constructor
     def __init__(self, m): # {{{
         # beginning values of snake
@@ -13,6 +14,7 @@ class Snake:
         #self.keys = ("KEY_UP","KEY_DOWN","KEY_LEFT","KEY_RIGHT")
 ############################################################ }}}
 
+
     # main function
     def main(self, scr): # {{{
         h,w = list(map(lambda x: x//2, scr.getmaxyx()))
@@ -20,6 +22,7 @@ class Snake:
         self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
         self.m.x = w
         self.m.y = h
+        self.direction = ''
         #scr.addstr(0,0, f"{self.m.x,self.m.y}")
         #self.xy = [w, h]
 
@@ -36,21 +39,39 @@ class Snake:
             scr.addstr(self.m.y, self.m.x, '')
             self.moves += 1
             #key = scr.getkey()
-            l1 = list(map(lambda x: self.direction != x, list('nswe')))
-            
-            l2 = [1 if self.m.y > 0 else h-2,
-                 1 if self.m.y < h-2 else '0',
-                 1 if self.m.x > 0 else w-1,
-                 1 if self.m.x < w-1 else '0'
+            #l1 = list(map(lambda x: self.direction != x, list('nswe')))
+
+
+
+
+            #l3 = list(map(lambda x : sum(list(map(int,x))) == 2, zip(l1,l2)))
+            """
+            l3 = [
+                (1 if self.m.y > 0 else h-2) if self.direction != 's' else 0,
+                (1 if self.m.y < h-2 else '0') if self.direction != 'n' else 0,
+                (1 if self.m.x > 0 else w-1) if self.direction != 'e' else 0,
+                (1 if self.m.x < w-1 else '0') if self.direction != 'w' else 0,
             ]
-            l3 = list(map(lambda x : sum(list(map(int,x))) == 2, zip(l1,l2)))
+            """
+            l3 = [
+                1 if self.m.y > 0 else h-2,
+                1 if self.m.y < h-2 else '0',
+                1 if self.m.x > 0 else w-1,
+                1 if self.m.x < w-1 else '0'
+            ]
+
+            key = self.m.press_key(scr, l3, strictness=1)
+            if type(key) != int:
+                self.press_key(key)
             # pressed arrow
-            if not self.m.press_key(scr, l3):
-                self.direction = 'nswe'[l3.index(1)]
-                continue
             else:
-                self.press_key()
-            #if self.press_key(scr, key):
+                if self.direction == 'snew'[key]:
+                    continue
+                else:
+                    self.direction = 'nswe'[key]
+
+
+
 
             # GAMEOVER - when snake ate itself
             if self.m.xy() in self.snake and self.moves > 3: # {{{
@@ -63,9 +84,10 @@ class Snake:
             #self.display_board(scr) # }}}
 ############################################################ }}}
 
+
     # press key
-    def press_key(self): # {{{
-        h,w = scr.getmaxyx()
+    def press_key(self, key): # {{{
+        #h,w = scr.getmaxyx()
         # enter
         if key == '\n':
             self.game = False
@@ -73,47 +95,8 @@ class Snake:
             self.moves -= 1
             key = ' '
 
-        """
-        # arrow up
-        elif key == 'KEY_UP' and self.direction != 's':
-            if self.xy[1] > 0:
-                self.xy[1] -= 1
-            else:
-                self.xy[1] = h-2
-            self.direction = 'n'
-
-
-        # arrow down
-        elif key == 'KEY_DOWN' and self.direction != 'n':
-            if self.xy[1] < h-2:
-                self.xy[1] += 1
-            else:
-                self.xy[1] = 0
-            self.direction = 's'
-
-
-        # arrow left
-        elif key == 'KEY_LEFT' and self.direction != 'e':
-            if self.xy[0] > 0:
-                self.xy[0] -= 1
-            else:
-                self.xy[0] = w-1
-            self.direction = 'w'
-
-
-        # arrow right
-        elif key == 'KEY_RIGHT' and self.direction != 'w':
-            if self.xy[0] < w-1:
-                self.xy[0] += 1
-            else:
-                self.xy[0] = 0
-            self.direction = 'e' 
-
-        # is arrow or it isn't
-        key = key not in self.keys
-        return key
-        """
 ############################################################################# }}}
+
 
     # create fruit
     def create_fruit(self, scr): # {{{
@@ -126,6 +109,7 @@ class Snake:
                 break
         self.fruit = [w,h]
 ############################################################################# }}}
+
 
     # display content with snake and bottombar
     def display_board(self, scr): # {{{
@@ -146,11 +130,12 @@ class Snake:
         scr.addstr(self.fruit[1], self.fruit[0], '0', curses.color_pair(2))
 
         # display bottombar
-        scr.addstr(h-1,0, f"{len(self.snake)}, {self.fruit}, {self.direction}, {self.difference_seconds()}", curses.color_pair(2))
+        bottombar = f"{len(self.snake)}, {self.fruit}, {self.direction}, {self.difference_seconds()}"
+        scr.addstr(h-1,0, bottombar, curses.color_pair(2))
         scr.addstr(self.m.y, self.m.x, '', curses.color_pair(1))
 ############################################################################# }}}
 
-    
+
     # when snake is going
     def snake_when_going(self): # {{{
         "strip and stretch snake"
@@ -158,6 +143,7 @@ class Snake:
         self.snake.append([self.m.x, self.m.y])
 
 ############################################################################# }}}
+
 
     # ending of game
     def end_screen(self, scr): # {{{
@@ -173,9 +159,12 @@ class Snake:
                 break 
 ############################################################################# }}}
 
+
     def difference_seconds(self): # {{{
         return int(time.time())-int(self.start_time)
 
 ############################################################################# }}}
 
-#curses.wrapper(Snake)
+if __name__ == '__main__':
+    s = Snake(__import__('move').Move())
+    curses.wrapper(s.main)
