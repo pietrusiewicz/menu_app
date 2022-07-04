@@ -30,7 +30,11 @@ class Program(move.Move):
 
     def tiles_for_app(self, scr):
         self.x = 0 
-        self.display_tiles(scr, ['arsen'])
+        while True:
+            self.display_tiles(scr, ['arsen'])
+            self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
+            if self.y==0:
+                break
 
 if __name__ == '__main__':
     p = Program()

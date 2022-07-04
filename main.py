@@ -69,22 +69,40 @@ class Menu(Move):
             end_index = menu_str.find(str(self.x+1))-2
             scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
 
+            key = list(self.content)[self.x]
 
-        # execute func in 54 line
-        #self.display_tiles(scr)
-        key = list(self.content)[self.x]
-        self.display_tiles(scr, 
-                t1=self.content[key][0],
-                t2=self.content[key][1],
-                t3=self.content[key][2],
-                t4=self.content[key][3],
+            self.display_tiles(scr, 
+                    t1=self.content[key][0],
+                    t2=self.content[key][1],
+                    t3=self.content[key][2],
+                    t4=self.content[key][3],
         )
+
+        if self.y > 0:
+            beg = self.x
+            self.tiles_for_app(scr)
+            self.x = beg
+
 
         # press a key (execute func in 87 line)
         self.key = self.press_key(scr, l)
         if self.key:
             self.pressed_a_key(scr)
 
+    def tiles_for_app(self, scr):
+        self.x = 0 
+        key = list(self.content)[self.x]
+        while True:
+            self.display_tiles(scr, 
+                    t1=self.content[key][0],
+                    t2=self.content[key][1],
+                    t3=self.content[key][2],
+                    t4=self.content[key][3],
+            )
+
+            self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
+            if self.y==0:
+                break
 
     # press a key
     def pressed_a_key(self,scr):
