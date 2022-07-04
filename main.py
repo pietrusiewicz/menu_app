@@ -52,6 +52,7 @@ class Menu:
             curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
             self.display_menu(scr) 
 
+
     # display menu
     def display_menu(self,scr):
         self.m.clear_board(scr)
@@ -77,7 +78,7 @@ class Menu:
                 )
 
         # press a key (execute func in 87 line)
-        self.key = self.m.press_key(scr, [0,0,self.m.x>0,self.m.x<len(self.content)-1])
+        self.key = self.m.press_key(scr, [self.m.y>0,self.m.y<2,self.m.x>0,self.m.x<len(self.content)-1])
         if self.key:
             self.pressed_a_key(scr)
 

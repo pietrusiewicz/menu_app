@@ -5,18 +5,17 @@ import time
 class Snake:
 
     # constructor
-    def __init__(self, m): # {{{
+    def __init__(self, m):
         # beginning values of snake
         self.m = m
         self.start_time = time.time()
         self.direction,self.moves = '',0
         self.fruit = [0,0]
         #self.keys = ("KEY_UP","KEY_DOWN","KEY_LEFT","KEY_RIGHT")
-############################################################ }}}
 
 
     # main function
-    def main(self, scr): # {{{
+    def main(self, scr):
         h,w = list(map(lambda x: x//2, scr.getmaxyx()))
         #h,w = [_//2 for _ in scr.getmaxyx()]
         self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
@@ -82,11 +81,10 @@ class Snake:
                 self.snake.append([int(self.m.x), int(self.m.y)])
                 self.create_fruit(scr)
             #self.display_board(scr) # }}}
-############################################################ }}}
 
 
     # press key
-    def press_key(self, key): # {{{
+    def press_key(self, key):
         #h,w = scr.getmaxyx()
         # enter
         if key == '\n':
@@ -95,11 +93,9 @@ class Snake:
             self.moves -= 1
             key = ' '
 
-############################################################################# }}}
-
 
     # create fruit
-    def create_fruit(self, scr): # {{{
+    def create_fruit(self, scr):
         "creating in random place fruit"
         while True:
             h,w = [int((_-1)*random.random()) for _ in scr.getmaxyx()]
@@ -108,11 +104,10 @@ class Snake:
             if [True, True] not in check:
                 break
         self.fruit = [w,h]
-############################################################################# }}}
 
 
     # display content with snake and bottombar
-    def display_board(self, scr): # {{{
+    def display_board(self, scr):
         # height,width of cli screen
         h,w = scr.getmaxyx()
 
@@ -133,20 +128,18 @@ class Snake:
         bottombar = f"{len(self.snake)}, {self.fruit}, {self.direction}, {self.difference_seconds()}"
         scr.addstr(h-1,0, bottombar, curses.color_pair(2))
         scr.addstr(self.m.y, self.m.x, '', curses.color_pair(1))
-############################################################################# }}}
+
 
 
     # when snake is going
-    def snake_when_going(self): # {{{
+    def snake_when_going(self):
         "strip and stretch snake"
         self.snake = self.snake[1:]; 
         self.snake.append([self.m.x, self.m.y])
 
-############################################################################# }}}
-
 
     # ending of game
-    def end_screen(self, scr): # {{{
+    def end_screen(self, scr):
         h,w = [_//2 for _ in scr.getmaxyx()]
         self.game=False
         # text with points, moves and time
@@ -157,13 +150,11 @@ class Snake:
             # enter ends game
             if scr.getkey() == '\n':
                 break 
-############################################################################# }}}
 
 
-    def difference_seconds(self): # {{{
+    def difference_seconds(self):
         return int(time.time())-int(self.start_time)
 
-############################################################################# }}}
 
 if __name__ == '__main__':
     s = Snake(__import__('move').Move())
