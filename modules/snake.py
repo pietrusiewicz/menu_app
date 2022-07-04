@@ -18,7 +18,7 @@ class Snake:
     def main(self, scr):
         h,w = list(map(lambda x: x//2, scr.getmaxyx()))
         #h,w = [_//2 for _ in scr.getmaxyx()]
-        self.snake,self.game = [[w-2,h],[w-1,h],[w,h]], True
+        self.snake, self.game = [[w-2,h],[w-1,h],[w,h]], True
         self.m.x = w
         self.m.y = h
         self.direction = ''
@@ -30,21 +30,13 @@ class Snake:
 
         # place a fruit
         self.create_fruit(scr)
+        self.display_board(scr)
         while self.game:
             h,w = scr.getmaxyx()
-            self.display_board(scr)
-            #scr.addstr(0,0, '')
-            scr.addstr(0,0, f"{list(self.m.xy())==self.fruit}")
+            #scr.addstr(0,0, f"{list(self.m.xy())==self.fruit}")
             scr.addstr(self.m.y, self.m.x, '')
             self.moves += 1
             #key = scr.getkey()
-            #l1 = list(map(lambda x: self.direction != x, list('nswe')))
-
-
-
-
-            #l3 = list(map(lambda x : sum(list(map(int,x))) == 2, zip(l1,l2)))
-            """
             l3 = [
                 (1 if self.m.y > 0 else h-2) if self.direction != 's' else 0,
                 (1 if self.m.y < h-2 else '0') if self.direction != 'n' else 0,
@@ -58,31 +50,31 @@ class Snake:
                 1 if self.m.x > 0 else w-1,
                 1 if self.m.x < w-1 else '0'
             ]
+            """
 
             key = self.m.press_key(scr, l3, strictness=1)
-            if type(key) != int:
-                self.press_key(key)
             # pressed arrow
-            else:
-                if self.direction == 'snew'[key]:
-                    continue
-                else:
-                    self.direction = 'nswe'[key]
+            if not l3[key]:
+                continue
+            self.direction = 'nswe'[key]
+            #else:
+            #    self.press_key(key)
 
 
 
 
             # GAMEOVER - when snake ate itself
-            if self.m.xy() in self.snake and self.moves > 3: # {{{
-                self.end_screen(scr) # }}}
+            if self.m.xy() in self.snake and self.moves > 3:
+                self.end_screen(scr)
 
             # +1 - when snake ate fruit
-            if self.m.xy() == self.fruit: # {{{
+            if self.m.xy() == self.fruit:
                 self.snake.append([int(self.m.x), int(self.m.y)])
                 self.create_fruit(scr)
-            #self.display_board(scr) # }}}
+            self.display_board(scr)
 
 
+    """
     # press key
     def press_key(self, key):
         #h,w = scr.getmaxyx()
@@ -92,6 +84,7 @@ class Snake:
         else:
             self.moves -= 1
             key = ' '
+    """
 
 
     # create fruit
