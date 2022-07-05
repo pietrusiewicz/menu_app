@@ -18,10 +18,10 @@ class Menu(Move):
         # content
         self.content = { 
                 "start": [
-                    {"todolist"},
-                    {},
-                    {},
-                    {}
+                    {"assier"},
+                    {'illaramendi'},
+                    {'mattias'},
+                    {'johanson'}
                 ],
                 "todolist": [
                     {},
@@ -52,11 +52,15 @@ class Menu(Move):
             curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
             curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
             self.display_menu(scr) 
+            # press a key (execute func in 87 line)
+            l = [self.y>0,self.y<2, self.x>0,self.x<len(self.content)-1]
+            self.key = self.press_key(scr, l)
+            if self.key:
+                self.pressed_a_key(scr)
 
 
     # display menu
     def display_menu(self,scr):
-        l = [self.y>0,self.y<2, self.x>0,self.x<len(self.content)-1]
         self.clear_board(scr)
 
         # display topbar
@@ -76,22 +80,18 @@ class Menu(Move):
                     t2=self.content[key][1],
                     t3=self.content[key][2],
                     t4=self.content[key][3],
-        )
+            )
 
         if self.y > 0:
-            beg = self.x
             self.tiles_for_app(scr)
-            self.x = beg
 
 
-        # press a key (execute func in 87 line)
-        self.key = self.press_key(scr, l)
-        if self.key:
-            self.pressed_a_key(scr)
+
 
     def tiles_for_app(self, scr):
-        self.x = 0 
+        beg = self.x
         key = list(self.content)[self.x]
+        self.x = 0 
         while True:
             self.display_tiles(scr, 
                     t1=self.content[key][0],
@@ -103,6 +103,9 @@ class Menu(Move):
             self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
             if self.y==0:
                 break
+        self.x = beg
+        self.display_menu(scr)
+
 
     # press a key
     def pressed_a_key(self,scr):

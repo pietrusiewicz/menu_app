@@ -68,7 +68,7 @@ class Move:
 
         # [1][1]
         for i, line in enumerate(t4):
-            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}",line, curses.color_pair(2))
+            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
 
 
 
