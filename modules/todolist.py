@@ -175,10 +175,28 @@ class Todolist:
         curses.init_pair(6, curses.COLOR_YELLOW, curses.COLOR_GREEN)
         curses.init_pair(7, curses.COLOR_BLACK, curses.COLOR_WHITE)
 
+class Todolist2:
+    def __init__(self, m):
+        self.t1 = {'a':1, 'b':0, 'c':1}
+        self.m = m
+
+    def main(self, scr):
+        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
+        while True:
+            self.m.display_tiles(scr, t1=self.t1)
+            k = self.m.press_key(scr, [self.m.y>0,self.m.y<2, self.m.x>0,self.m.x<1])
+            if type(k) != bool and ord(k) == 10:
+                self.lines_in_tile(scr)
+
+    def lines_in_tile(self, scr):
+        pass
 
 if __name__ == '__main__':
     import move
-    t = Todolist(move.Move())
+    t = Todolist2(move.Move())
     curses.wrapper(t.main)
 #curses.wrapper(Todolist)
 #print(Todolist.main.__doc__)

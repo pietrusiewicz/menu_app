@@ -45,21 +45,34 @@ class Move:
 
         # render background for [0] row
         for i in range(2, int(h//2)-2):
-            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(4 if [self.x,self.y]==[0,1] else 2))
-            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4 if [self.x,self.y]==[1,1] else 2))
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
+        if [self.x,self.y] == [0,1]:
+            scr.addstr(2, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
+        if [self.x,self.y] == [1,1]:
+            scr.addstr(2, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
+
 
         # render [1] row
         for i in range(int(h//2)+2, h-3):
-            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(4 if [self.x,self.y]==[0,2] else 2))
-            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4 if [self.x,self.y]==[1,2] else 2))
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
+        if [self.x,self.y] == [0,2]:
+            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
+            scr.addstr(h//2+2, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
+        if [self.x,self.y] == [1,2]:
+            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
+            scr.addstr(h//2+2, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
 
         # [0][0]
         for i, line in enumerate(t1):
-            scr.addstr(3, 3, line, curses.color_pair(2))
+            scr.addstr(3+i, 3, line, curses.color_pair(2))
 
         # [0][1]
         for i, line in enumerate(t2):
-            scr.addstr(3, w//2+5, line, curses.color_pair(2))
+            scr.addstr(3+i, w//2+5, line, curses.color_pair(2))
 
 
         # [1][0]

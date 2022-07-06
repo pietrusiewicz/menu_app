@@ -33,7 +33,7 @@ class Menu(Move):
                     {}
                 ],
                 "snake": [
-                    {},
+                    {"launch snake": lambda: [s:= Snake(Move()), s.main(scr)]},
                     {},
                     {},
                     {}
@@ -87,6 +87,7 @@ class Menu(Move):
             self.tiles_for_app(scr)
 
 
+    # action in tile
     def tiles_for_app(self, scr):
         beg = self.x
         self.x = 0 
@@ -98,7 +99,7 @@ class Menu(Move):
                     t4=self.content[self.category][3],
             )
 
-            key = self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
+            key = self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<1])
             if self.y==0:
                 break
             if type(key)!= bool and ord(key) == 10:
@@ -128,14 +129,6 @@ class Menu(Move):
                 for value in d.values():
                     value()
             """
-            if self.x == 1:
-                t = Todolist(Move())
-                t.main(scr)
-
-            if self.x == 2:
-                s = Snake(Move())
-                s.main(scr)
-
             if self.x == 3:
                 if 'modules/config.json' not in os.listdir('modules'):
                     json.dump({},open('config.json', 'w'))
