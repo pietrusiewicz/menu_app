@@ -101,11 +101,13 @@ class Menu(Move):
             key = self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
             if self.y==0:
                 break
-            if key == "KEY_ENTER":
+            if type(key)!= bool and ord(key) == 10:
+
                 if type(self.content[self.category][self.y-1 + self.x]) == dict:
                     d = self.content[self.category][self.y-1 + self.x]
                     for value in d.values():
-                        scr.addstr(0,0, f"{value()}")
+                        value()
+
         self.x = beg
         self.display_menu(scr)
 
