@@ -15,16 +15,19 @@ class Menu(Move):
     def __init__(self):
         Move.__init__(self)
         
+
+    # menu what displayes menu
+    def main(self, scr): 
         # content
         self.content = { 
                 "start": [
-                    {"assier"},
-                    {'illaramendi'},
-                    {'mattias'},
-                    {'johanson'}
+                    {"start1"},
+                    {'start2'},
+                    {'start3'},
+                    {'start4'}
                 ],
                 "todolist": [
-                    {},
+                    {"launch todolist": lambda: [t:=Todolist(Move()), t.main(scr)]},
                     {},
                     {'ale nie'},
                     {}
@@ -43,9 +46,6 @@ class Menu(Move):
                 ]
             }
 
-
-    # menu what displayes menu
-    def main(self, scr): 
         while True:
             curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
             curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
@@ -73,36 +73,39 @@ class Menu(Move):
             end_index = menu_str.find(str(self.x+1))-2
             scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
 
-            key = list(self.content)[self.x]
+            #key = list(self.content)[self.x]
+            self.category = list(self.content)[self.x]
 
             self.display_tiles(scr, 
-                    t1=self.content[key][0],
-                    t2=self.content[key][1],
-                    t3=self.content[key][2],
-                    t4=self.content[key][3],
+                    t1=self.content[self.category][0],
+                    t2=self.content[self.category][1],
+                    t3=self.content[self.category][2],
+                    t4=self.content[self.category][3],
             )
 
         if self.y > 0:
             self.tiles_for_app(scr)
 
 
-
-
     def tiles_for_app(self, scr):
         beg = self.x
-        key = list(self.content)[self.x]
         self.x = 0 
         while True:
             self.display_tiles(scr, 
-                    t1=self.content[key][0],
-                    t2=self.content[key][1],
-                    t3=self.content[key][2],
-                    t4=self.content[key][3],
+                    t1=self.content[self.category][0],
+                    t2=self.content[self.category][1],
+                    t3=self.content[self.category][2],
+                    t4=self.content[self.category][3],
             )
 
-            self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
+            key = self.press_key(scr, cnds=[self.y>0,self.y<2, self.x>0,self.x<3])
             if self.y==0:
                 break
+            if key == "KEY_ENTER":
+                if type(self.content[self.category][self.y-1 + self.x]) == dict:
+                    d = self.content[self.category][self.y-1 + self.x]
+                    for value in d.values():
+                        scr.addstr(0,0, f"{value()}")
         self.x = beg
         self.display_menu(scr)
 
@@ -115,7 +118,14 @@ class Menu(Move):
             sys.exit()
         
         # ENTER key
+        #elif self.key == "KEY_ENTER":
         elif ord(self.key) == 10:
+            #key = list(self.content)[self.x]
+            if type(self.content[self.category][self.y + self.x]) == dict:
+                d = self.content[self.category][self.y + self.x]
+                for value in d.values():
+                    value()
+            """
             if self.x == 1:
                 t = Todolist(Move())
                 t.main(scr)
@@ -132,6 +142,7 @@ class Menu(Move):
                     d['snapshot_ls'] = []
                 s = Snapshot(d['snapshot_ls'])
                 s.config_app(scr)
+            """
 
 
 if __name__ == '__main__':

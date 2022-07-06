@@ -41,14 +41,14 @@ class Todolist:
                 self.clrdis_line(scr, "[d]elete [e]dit [c]lear", h=len(self.d)+1) # }}}
 
             # display selected item
-            selected_is_true = False # {{{
+            selected_is_true = False
             if self.m.y in range(len(self.d)):
                 line = f"{str(self.m.y+1)+ ')' + list(self.d)[self.m.y]}"
                 selected_is_true = self.d[list(self.d)[self.m.y]]
             else:
                 line = f"+)"
                 #line = f"{self.m.y+1})"
-            self.clrdis_line(scr, line, n=5+selected_is_true,h=self.m.y) # }}}
+            self.clrdis_line(scr, line, n=5+selected_is_true,h=self.m.y)
 
 
             # press a key

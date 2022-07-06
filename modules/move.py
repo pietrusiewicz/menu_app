@@ -41,7 +41,7 @@ class Move:
     # display tiles
     def display_tiles(self, scr, t1=[], t2=[], t3=[], t4=[]):
         h,w = scr.getmaxyx()
-        #key = list(self.content.keys())[self.m.x]
+        #key = list(self.content)[self.m.x]
 
         # render background for [0] row
         for i in range(2, int(h//2)-2):
