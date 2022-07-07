@@ -40,39 +40,60 @@ class Move:
 
     # display tiles
     def display_tiles(self, scr, t1=[], t2=[], t3=[], t4=[]):
+        #curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
         h,w = scr.getmaxyx()
         #key = list(self.content)[self.m.x]
 
+        scr.refresh()
         # render background for [0] row
-        for i in range(2, int(h//2)-2):
-            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
-            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
-        if [self.x,self.y] == [0,1]:
-            scr.addstr(2, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
-            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
+        vals = [
+                (h//2-4,w//2-6, 2,3), 
+                (h//2-4,w//2-8, 2,w//2+5),
+                (h//2-4,w//2-6, h//2+2, 3),
+                (h//2-4,w//2-8, h//2+2, w//2+5)
+            ]
+        wins = [curses.newwin(a,b,c,d) for a,b,c,d in vals]
+        scr.refresh()
+        #win.bkgd(' ', curses.color_pair(4))
+        #win01 = curses.newwin(h//2-4,w//2-8, 2, w//2+5)
+
+        for i in range(4):
+            wins[i].bkgd(' ', curses.color_pair(2))
+            for line in eval(f"t{i+1}"):
+                wins[i].addstr(line, curses.color_pair(2))
+            wins[i].refresh()
+
+        for i, num in enumerate([[0,1], [1,1], [0,2], [1,2]]):
+            if num == [self.x, self.y]:
+        #if [self.x,self.y] == [0,1]:
+                wins[i].bkgd(' ', curses.color_pair(4))
+                wins[i].refresh()
+        """
         if [self.x,self.y] == [1,1]:
-            scr.addstr(2, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
-            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
+            wins[1].bkgd(' ', curses.color_pair(4))
+            wins[1].refresh()
 
-
-        # render [1] row
-        for i in range(int(h//2)+2, h-3):
-            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(2))
-            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(2))
         if [self.x,self.y] == [0,2]:
-            scr.addstr(i, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
-            scr.addstr(h//2+2, 3, f'{" ":{w//2-6}}', curses.color_pair(4))
-        if [self.x,self.y] == [1,2]:
-            scr.addstr(i, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
-            scr.addstr(h//2+2, w//2+5, f'{" ":{w//2-8}}', curses.color_pair(4))
+            wins[2].bkgd(' ', curses.color_pair(4))
+            wins[2].refresh()
 
+        if [self.x,self.y] == [1,2]:
+            wins[3].bkgd(' ', curses.color_pair(4))
+            wins[3].refresh()
+
+        map(lambda win : win.refresh(), wins)
+        """
+        # content api XD
         # [0][0]
+        """
         for i, line in enumerate(t1):
-            scr.addstr(3+i, 3, line, curses.color_pair(2))
+            wins[0].addstr("{line:{w//2-6}}", curses.color_pair(2))
+            #scr.addstr(3+i, 3, f"{line:{w//2-6}}", curses.color_pair(2))
 
         # [0][1]
         for i, line in enumerate(t2):
-            scr.addstr(3+i, w//2+5, line, curses.color_pair(2))
+            wins[1].addstr(f"{line:{w//2-8}}", curses.color_pair(2))
+            #scr.addstr(3+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
 
 
         # [1][0]
@@ -83,6 +104,7 @@ class Move:
         for i, line in enumerate(t4):
             scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
 
+        """
 
 
 
