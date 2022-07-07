@@ -40,12 +40,9 @@ class Move:
 
     # display tiles
     def display_tiles(self, scr, t1=[], t2=[], t3=[], t4=[]):
-        #curses.init_pair(1, curses.COLOR_WHITE, curses.COLOR_BLUE)
         h,w = scr.getmaxyx()
-        #key = list(self.content)[self.m.x]
 
-        scr.refresh()
-        # render background for [0] row
+        # localizations of tiles
         vals = [
                 (h//2-4,w//2-6, 2,3), 
                 (h//2-4,w//2-8, 2,w//2+5),
@@ -54,8 +51,6 @@ class Move:
             ]
         wins = [curses.newwin(a,b,c,d) for a,b,c,d in vals]
         scr.refresh()
-        #win.bkgd(' ', curses.color_pair(4))
-        #win01 = curses.newwin(h//2-4,w//2-8, 2, w//2+5)
 
         for i in range(4):
             wins[i].bkgd(' ', curses.color_pair(2))
@@ -63,12 +58,10 @@ class Move:
                 wins[i].addstr(line, curses.color_pair(2))
             wins[i].refresh()
 
-        for i, num in enumerate([[0,1], [1,1], [0,2], [1,2]]):
-            if num == [self.x, self.y]:
-        #if [self.x,self.y] == [0,1]:
-                wins[i].bkgd(' ', curses.color_pair(4))
-                wins[i].refresh()
-
+        if self.y > 0:
+            i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
+            wins[i].bkgd(' ', curses.color_pair(4))
+            wins[i].refresh()
 
 
     def xy(self):
