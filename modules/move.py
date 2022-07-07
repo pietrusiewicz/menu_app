@@ -68,44 +68,6 @@ class Move:
         #if [self.x,self.y] == [0,1]:
                 wins[i].bkgd(' ', curses.color_pair(4))
                 wins[i].refresh()
-        """
-        if [self.x,self.y] == [1,1]:
-            wins[1].bkgd(' ', curses.color_pair(4))
-            wins[1].refresh()
-
-        if [self.x,self.y] == [0,2]:
-            wins[2].bkgd(' ', curses.color_pair(4))
-            wins[2].refresh()
-
-        if [self.x,self.y] == [1,2]:
-            wins[3].bkgd(' ', curses.color_pair(4))
-            wins[3].refresh()
-
-        map(lambda win : win.refresh(), wins)
-        """
-        # content api XD
-        # [0][0]
-        """
-        for i, line in enumerate(t1):
-            wins[0].addstr("{line:{w//2-6}}", curses.color_pair(2))
-            #scr.addstr(3+i, 3, f"{line:{w//2-6}}", curses.color_pair(2))
-
-        # [0][1]
-        for i, line in enumerate(t2):
-            wins[1].addstr(f"{line:{w//2-8}}", curses.color_pair(2))
-            #scr.addstr(3+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
-
-
-        # [1][0]
-        for i, line in enumerate(t3):
-            scr.addstr(h//2+5+i, 3, f"{line:{w//2-6}}", curses.color_pair(2))
-
-        # [1][1]
-        for i, line in enumerate(t4):
-            scr.addstr(h//2+5+i, w//2+5, f"{line:{w//2-8}}", curses.color_pair(2))
-
-        """
-
 
 
 
