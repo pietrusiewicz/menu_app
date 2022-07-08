@@ -192,17 +192,15 @@ class Todolist2:
                 self.lines_in_tile(scr)
 
     def lines_in_tile(self, scr):
-        self.m.inside_tile(scr)
-        """
-        beg = self.m.xy
-        self.m.y,self.m.x = 0,0
-        while True:
+        beg = self.m.xy()
+        n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
+        self.m.x, self.m.y = 0,0
 
-            k = self.m.press_key(scr, [0,0, self.m.x>0,self.m.x<1])
-            if type(k) != bool and ord(k) == 27:
-                break
+
+        self.m.tile_app(scr, n=n, l=["mattias", "johansoon"])
+
+
         self.m.x, self.m.y = beg
-        """
 
 
 if __name__ == '__main__':

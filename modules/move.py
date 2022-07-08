@@ -62,29 +62,24 @@ class Move:
             self.fill_color(i, 4)
 
     # move in tile
-    def inside_tile(self, scr, l=['nic', 'takiego']):
-        beg = self.xy()
-        n = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
-        self.x, self.y = 0,0
+    def tile_app(self, scr, n, l=['nic', 'takiego']):
         win = self.wins[n]
         h,w = self.vals[n][:2]
-        while True:
-            scr.refresh()
-            self.fill_color(n, 2)
-            for i, line in enumerate(l):
-                c = 4 if i == self.y else 2
-                win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
+        scr.refresh()
+        self.fill_color(n, 2)
+        for i, line in enumerate(l):
+            c = 4 if i == self.y else 2
+            win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
 
-            win.addstr(len(l), 0, f'{"+":{w}}', curses.color_pair(4 if len(l) == self.y else 2))
-            win.refresh()
+        win.addstr(len(l), 0, f'{"+":{w}}', curses.color_pair(4 if len(l) == self.y else 2))
+        win.refresh()
 
-            k = self.press_key(scr, [self.y>0, self.y<len(l), 0,0])
+        k = self.press_key(scr, [self.y>0, self.y<len(l), 0,0])
 
-            # ESC
-            if type(k) != bool and ord(k) == 27:
-                break
-        
-        self.x, self.y = beg
+        # ESC
+        if not k:
+            self.tile_app(scr,n=n, l=l)
+    
 
     def fill_color(self, i, n):
         self.wins[i].bkgd(' ', curses.color_pair(n))
