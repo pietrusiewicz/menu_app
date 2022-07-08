@@ -192,7 +192,7 @@ class Todolist2:
                 self.lines_in_tile(scr)
 
     def lines_in_tile(self, scr):
-        pass
+        self.m.inside_tile(scr)
         """
         beg = self.m.xy
         self.m.y,self.m.x = 0,0

@@ -62,16 +62,25 @@ class Move:
             self.fill_color(i, 4)
 
     # move in tile
-    def inside_tile(self, scr, l):
+    def inside_tile(self, scr, l=['nic', 'takiego']):
         beg = self.xy()
-        i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
-        win = self.wins[i]
-        h,w = self.vals[i][:2]
+        n = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
+        self.x, self.y = 0,0
+        win = self.wins[n]
+        h,w = self.vals[n][:2]
         while True:
+            scr.refresh()
+            self.fill_color(n, 2)
             for i, line in enumerate(l):
-                win.addstr(i, 0, line)
-            self.fill_color(i, 2)
-            k = self.press_key(scr, [0,0, self.x>0,self.x<1])
+                c = 4 if i == self.y else 2
+                win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
+
+            win.addstr(len(l), 0, f'{"+":{w}}', curses.color_pair(4 if len(l) == self.y else 2))
+            win.refresh()
+
+            k = self.press_key(scr, [self.y>0, self.y<len(l), 0,0])
+
+            # ESC
             if type(k) != bool and ord(k) == 27:
                 break
         
