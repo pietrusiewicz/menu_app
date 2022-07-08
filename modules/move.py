@@ -43,26 +43,43 @@ class Move:
         h,w = scr.getmaxyx()
 
         # localizations of tiles
-        vals = [
+        self.vals = [
                 (h//2-4,w//2-6, 2,3), 
                 (h//2-4,w//2-8, 2,w//2+5),
                 (h//2-4,w//2-6, h//2+2, 3),
                 (h//2-4,w//2-8, h//2+2, w//2+5)
             ]
-        wins = [curses.newwin(a,b,c,d) for a,b,c,d in vals]
+        self.wins = [curses.newwin(a,b,c,d) for a,b,c,d in self.vals]
         scr.refresh()
 
         for i in range(4):
-            wins[i].bkgd(' ', curses.color_pair(2))
             for line in eval(f"t{i+1}"):
-                wins[i].addstr(line, curses.color_pair(2))
-            wins[i].refresh()
+                self.wins[i].addstr(line, curses.color_pair(2))
+            self.fill_color(i, 2)
 
         if self.y > 0:
             i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
-            wins[i].bkgd(' ', curses.color_pair(4))
-            wins[i].refresh()
+            self.fill_color(i, 4)
 
+    # move in tile
+    def inside_tile(self, scr, l):
+        beg = self.xy()
+        i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
+        win = self.wins[i]
+        h,w = self.vals[i][:2]
+        while True:
+            for i, line in enumerate(l):
+                win.addstr(i, 0, line)
+            self.fill_color(i, 2)
+            k = self.press_key(scr, [0,0, self.x>0,self.x<1])
+            if type(k) != bool and ord(k) == 27:
+                break
+        
+        self.x, self.y = beg
+
+    def fill_color(self, i, n):
+        self.wins[i].bkgd(' ', curses.color_pair(n))
+        self.wins[i].refresh()
 
     def xy(self):
         return [self.x,self.y]

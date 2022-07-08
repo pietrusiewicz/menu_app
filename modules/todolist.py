@@ -193,6 +193,17 @@ class Todolist2:
 
     def lines_in_tile(self, scr):
         pass
+        """
+        beg = self.m.xy
+        self.m.y,self.m.x = 0,0
+        while True:
+
+            k = self.m.press_key(scr, [0,0, self.m.x>0,self.m.x<1])
+            if type(k) != bool and ord(k) == 27:
+                break
+        self.m.x, self.m.y = beg
+        """
+
 
 if __name__ == '__main__':
     import move
