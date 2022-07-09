@@ -61,6 +61,7 @@ class Move:
             i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
             self.fill_color(i, 4)
 
+
     # move in tile
     def tile_app(self, scr, n, l=['nic', 'takiego']):
         win = self.wins[n]
@@ -68,17 +69,31 @@ class Move:
         scr.refresh()
         self.fill_color(n, 2)
         for i, line in enumerate(l):
-            c = 4 if i == self.y else 2
+            c = 6 if l[line] else 5
             win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
+            if self.y == i:
+                win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
+
 
         win.addstr(len(l), 0, f'{"+":{w}}', curses.color_pair(4 if len(l) == self.y else 2))
         win.refresh()
 
         k = self.press_key(scr, [self.y>0, self.y<len(l), 0,0])
 
-        # ESC
+        # arrow
         if not k:
             self.tile_app(scr,n=n, l=l)
+        # key
+        else:
+            # ENTER
+            if ord(k) == 10:
+                if self.y < len(l):
+                    l[list(l)[self.y]] = not l[list(l)[self.y]]
+                else:
+                    while True:
+                        l.insert(self.y, "kowno")
+                        break
+                self.tile_app(scr, n=n, l=l)
     
 
     def fill_color(self, i, n):

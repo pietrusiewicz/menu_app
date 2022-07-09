@@ -177,14 +177,16 @@ class Todolist:
 
 class Todolist2:
     def __init__(self, m):
-        self.t1 = {'a':1, 'b':0, 'c':1}
+        self.t1 = {'a':True, 'b':False, 'c':True}
         self.m = m
 
     def main(self, scr):
-        curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
         curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
-        curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLUE)
         curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
+        curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
+        curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
         while True:
             self.m.display_tiles(scr, t1=self.t1)
             k = self.m.press_key(scr, [self.m.y>0,self.m.y<2, self.m.x>0,self.m.x<1])
@@ -196,8 +198,8 @@ class Todolist2:
         n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
         self.m.x, self.m.y = 0,0
 
-
-        self.m.tile_app(scr, n=n, l=["mattias", "johansoon"])
+        #l = ["mattias", "johansoon"]
+        self.m.tile_app(scr, n=n, l=self.t1)
 
 
         self.m.x, self.m.y = beg
