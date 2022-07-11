@@ -3,6 +3,7 @@ import curses
 class Move:
 
     def __init__(self):
+        self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
         self.x, self.y = 0,0
 
     def press_key(self, scr, cnds=[1,1,1,1], strictness=0):
@@ -63,28 +64,37 @@ class Move:
 
 
     # move in tile
-    def tile_app(self, scr, n, l=['nic', 'takiego']):
+    def tile_app(self, scr, n, d=['nic', 'takiego']):
+        self.d = d
         win = self.wins[n]
         h,w = self.vals[n][:2]
         scr.refresh()
         self.fill_color(n, 2)
-        for i, line in enumerate(l):
-            c = 6 if l[line] else 5
+        for i, line in enumerate(d):
+            c = 6 if d[line] else 5
             win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
             if self.y == i:
                 win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
 
 
-        win.addstr(len(l), 0, f'{"+":{w}}', curses.color_pair(4 if len(l) == self.y else 2))
+        win.addstr(len(self.d), 0, f'{"+":{w}}', curses.color_pair(4 if len(self.d) == self.y else 2))
         win.refresh()
 
-        k = self.press_key(scr, [self.y>0, self.y<len(l), 0,0])
+        k = self.press_key(scr, [self.y>0, self.y<len(self.d), 0,0])
 
-        # arrow
+        # arrow - move
         if not k:
-            self.tile_app(scr,n=n, l=l)
+            self.tile_app(scr,n=n, d=self.d)
         # key
         else:
+            if k in ("KEY_BACKSPACE", '\b', '\x7f'):
+                d.pop(list(self.d)[self.y])
+            # press letter
+            elif ord(k) in range(32, 127):
+                self.insert_mode(win, k)
+
+            self.tile_app(scr, n, d)
+
             # ENTER
             if ord(k) == 10:
                 if self.y < len(l):
@@ -95,6 +105,27 @@ class Move:
                         break
                 self.tile_app(scr, n=n, l=l)
     
+    def insert_mode(self, win, item):
+        "insert like vim"
+
+
+
+        key = win.getkey()
+        win.addstr(self.y,0, f"{item+key}")
+        # press backspace
+        if key in ("KEY_BACKSPACE", '\b', '\x7f'):
+            self.insert_mode(win, item[:-1])
+
+        # press enter
+        # exit insert mode 
+        elif ord(key) == 10:
+            self.d[item] = False
+
+        # press letter
+        elif key in self.a_z:
+            self.insert_mode(win, item+key)
+
+
 
     def fill_color(self, i, n):
         self.wins[i].bkgd(' ', curses.color_pair(n))

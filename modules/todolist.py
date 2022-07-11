@@ -199,7 +199,7 @@ class Todolist2:
         self.m.x, self.m.y = 0,0
 
         #l = ["mattias", "johansoon"]
-        self.m.tile_app(scr, n=n, l=self.t1)
+        self.m.tile_app(scr, n=n, d=self.t1)
 
 
         self.m.x, self.m.y = beg
