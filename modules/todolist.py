@@ -1,4 +1,5 @@
 import curses
+import os
 import time
 import sys
 
@@ -191,21 +192,23 @@ class Todolist2:
             self.m.display_tiles(scr, t1=self.t1)
             k = self.m.press_key(scr, [self.m.y>0,self.m.y<2, self.m.x>0,self.m.x<1])
             if type(k) != bool and ord(k) == 10:
-                self.lines_in_tile(scr)
+                self.enter_tile(scr)
 
-    def lines_in_tile(self, scr):
+    def enter_tile(self, scr):
         beg = self.m.xy()
         n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
         self.m.x, self.m.y = 0,0
+        win = self.m.wins[n]
 
-        #l = ["mattias", "johansoon"]
-        self.m.tile_app(scr, n=n, d=self.t1)
+        self.m.tile_app(scr, win, d=self.t1)
+        self.main(scr)
 
 
         self.m.x, self.m.y = beg
 
 
 if __name__ == '__main__':
+    #os.environ.setdefault('ESCDELAY', '25')
     import move
     t = Todolist2(move.Move())
     curses.wrapper(t.main)

@@ -41,6 +41,9 @@ class Move:
 
     # display tiles
     def display_tiles(self, scr, t1=[], t2=[], t3=[], t4=[]):
+        """
+        first level in app
+        """
         h,w = scr.getmaxyx()
 
         # localizations of tiles
@@ -56,20 +59,22 @@ class Move:
         for i in range(4):
             for line in eval(f"t{i+1}"):
                 self.wins[i].addstr(line, curses.color_pair(2))
-            self.fill_color(i, 2)
+            self.fill_color(self.wins[i], 2)
 
         if self.y > 0:
             i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
-            self.fill_color(i, 4)
+            self.fill_color(self.wins[i], 4)
 
 
     # move in tile
-    def tile_app(self, scr, n, d=['nic', 'takiego']):
+    def tile_app(self, scr, win, d=['nic', 'takiego']):
+        """
+        display_tiles -> tile_app
+        """
         self.d = d
-        win = self.wins[n]
-        h,w = self.vals[n][:2]
+        h,w = win.getmaxyx()
         scr.refresh()
-        self.fill_color(n, 2)
+        self.fill_color(win, 2)
         for i, line in enumerate(d):
             c = 6 if d[line] else 5
             win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
@@ -84,52 +89,66 @@ class Move:
 
         # arrow - move
         if not k:
-            self.tile_app(scr,n=n, d=self.d)
+            self.tile_app(scr,win, d=self.d)
         # key
         else:
-            if k in ("KEY_BACKSPACE", '\b', '\x7f'):
-                d.pop(list(self.d)[self.y])
-            # press letter
-            elif ord(k) in range(32, 127):
-                self.insert_mode(win, k)
+            while True:
+                # exit tile
+                if ord(k) == 27:
+                    break
+                # delete item
+                elif k in ("KEY_BACKSPACE", '\b', '\x7f'):
+                    item = list(self.d)[self.y]
+                    win.addstr(self.y,0, f"Are you sure to delete {item}? y/n")
+                    while k := self.press_key(win, [0,0,0,0]).lower():
+                        if k == 'y':
+                            d.pop(item)
+                            break
+                        elif k == 'n':
+                            break
 
-            self.tile_app(scr, n, d)
+                # press letter
+                elif ord(k) in range(32, 127):
+                    # edit add
+                    key = self.edit_line(win, k)
+                    d[key] = False
 
-            # ENTER
-            if ord(k) == 10:
-                if self.y < len(l):
-                    l[list(l)[self.y]] = not l[list(l)[self.y]]
-                else:
-                    while True:
-                        l.insert(self.y, "kowno")
-                        break
-                self.tile_app(scr, n=n, l=l)
+                # ENTER in tile
+                elif ord(k) == 10:
+                    if self.y < len(d):
+                        d[list(d)[self.y]] = not d[list(d)[self.y]]
+                    else:
+                        key = self.edit_line(win, k)
+                        d[key] = False
+
+
     
-    def insert_mode(self, win, item):
-        "insert like vim"
+    #edit line in tile
+    def edit_line(self, win, item):
+        """
+        display_tiles -> tile_app -> edit_line
+        """
+        win.addstr(self.y,0, f"{item}")
+        while key := self.press_key(win, [0,0, 0,0]):
+            #key = self.press_key(win, [0,0, 0,0])
+            win.addstr(self.y,0, f"{item}")
+            # press backspace
+            if key in ("KEY_BACKSPACE", '\b', '\x7f'):
+                item = item[:-1]
+
+            # press enter
+            # exit insert mode 
+            elif ord(key) == 10:
+                return item
+
+            # press letter
+            elif key in self.a_z:
+                item += key
 
 
-
-        key = win.getkey()
-        win.addstr(self.y,0, f"{item+key}")
-        # press backspace
-        if key in ("KEY_BACKSPACE", '\b', '\x7f'):
-            self.insert_mode(win, item[:-1])
-
-        # press enter
-        # exit insert mode 
-        elif ord(key) == 10:
-            self.d[item] = False
-
-        # press letter
-        elif key in self.a_z:
-            self.insert_mode(win, item+key)
-
-
-
-    def fill_color(self, i, n):
-        self.wins[i].bkgd(' ', curses.color_pair(n))
-        self.wins[i].refresh()
+    def fill_color(self, win, n):
+        win.bkgd(' ', curses.color_pair(n))
+        win.refresh()
 
     def xy(self):
         return [self.x,self.y]
