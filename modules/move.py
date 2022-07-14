@@ -69,35 +69,34 @@ class Move:
     # move in tile
     def tile_app(self, scr, win, d=['nic', 'takiego']):
         """
+        second level in app
         display_tiles -> tile_app
         """
         self.d = d
         h,w = win.getmaxyx()
-        scr.refresh()
-        self.fill_color(win, 2)
-        for i, line in enumerate(d):
-            c = 6 if d[line] else 5
-            win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
-            if self.y == i:
-                win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
+        while True:
+            scr.refresh()
+            self.fill_color(win, 2)
+            for i, line in enumerate(d):
+                c = 6 if d[line] else 5
+                win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
+                if self.y == i:
+                    win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
 
 
-        win.addstr(len(self.d), 0, f'{"+":{w}}', curses.color_pair(4 if len(self.d) == self.y else 2))
-        win.refresh()
+            win.addstr(len(self.d), 0, f'{"+":{w}}', curses.color_pair(4 if len(self.d) == self.y else 2))
+            win.refresh()
 
-        k = self.press_key(scr, [self.y>0, self.y<len(self.d), 0,0])
+            k = self.press_key(scr, [self.y>0, self.y<len(self.d), 0,0])
 
-        # arrow - move
-        if not k:
-            self.tile_app(scr,win, d=self.d)
-        # key
-        else:
-            while True:
-                # exit tile
-                if ord(k) == 27:
-                    break
+            # arrow - move
+            if not k:
+                #self.tile_app(scr,win, d=self.d)
+                continue
+            # other keys
+            else:
                 # delete item
-                elif k in ("KEY_BACKSPACE", '\b', '\x7f'):
+                if k in ("KEY_BACKSPACE", '\b', '\x7f'):
                     item = list(self.d)[self.y]
                     win.addstr(self.y,0, f"Are you sure to delete {item}? y/n")
                     while k := self.press_key(win, [0,0,0,0]).lower():
@@ -107,31 +106,43 @@ class Move:
                         elif k == 'n':
                             break
 
-                # press letter
-                elif ord(k) in range(32, 127):
-                    # edit add
-                    key = self.edit_line(win, k)
-                    d[key] = False
+                # exit tile
+                elif ord(k) == 27:
+                    break
 
-                # ENTER in tile
+                # press letter       A - z
+                elif ord(k) in range(32, 127):
+                    # edit item
+                    if self.y < len(d):
+                        item = list(self.d)[self.y]
+                        newitem = self.edit_line(win, f"{item+k}")
+                        d[newitem] = d[item]
+                        d.pop(item)
+                    # edit add
+                    else:
+                        key = self.edit_line(win, k)
+                        d[key] = False
+
+                # click in line ENTER
                 elif ord(k) == 10:
                     if self.y < len(d):
                         d[list(d)[self.y]] = not d[list(d)[self.y]]
                     else:
                         key = self.edit_line(win, k)
                         d[key] = False
-
+        return d
 
     
-    #edit line in tile
+    # edit line in tile
     def edit_line(self, win, item):
         """
+        third level in app
         display_tiles -> tile_app -> edit_line
         """
         win.addstr(self.y,0, f"{item}")
         while key := self.press_key(win, [0,0, 0,0]):
             #key = self.press_key(win, [0,0, 0,0])
-            win.addstr(self.y,0, f"{item}")
+            win.addstr(self.y,0, f"{item+key}")
             # press backspace
             if key in ("KEY_BACKSPACE", '\b', '\x7f'):
                 item = item[:-1]
@@ -139,11 +150,11 @@ class Move:
             # press enter
             # exit insert mode 
             elif ord(key) == 10:
-                return item
-
+                break
             # press letter
             elif key in self.a_z:
                 item += key
+        return item
 
 
     def fill_color(self, win, n):

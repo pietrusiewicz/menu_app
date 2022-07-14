@@ -4,7 +4,7 @@ import sys
 import json
 import os
 
-from modules.todolist import Todolist
+from modules.todolist import Todolist2 as Todolist
 from modules.snake import Snake
 from modules.snapshot_ls import Snapshot
 from modules.move import Move

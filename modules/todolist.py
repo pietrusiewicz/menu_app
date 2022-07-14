@@ -179,6 +179,9 @@ class Todolist:
 class Todolist2:
     def __init__(self, m):
         self.t1 = {'a':True, 'b':False, 'c':True}
+        self.t2 = {'a':True, 'b':False, 'c':True}
+        self.t3 = {'a':True, 'b':False, 'c':True}
+        self.t4 = {'a':True, 'b':False, 'c':True}
         self.m = m
 
     def main(self, scr):
@@ -189,7 +192,7 @@ class Todolist2:
         curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
         curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
         while True:
-            self.m.display_tiles(scr, t1=self.t1)
+            self.m.display_tiles(scr, t1=self.t1, t2=self.t2, t3=self.t3, t4=self.t4)
             k = self.m.press_key(scr, [self.m.y>0,self.m.y<2, self.m.x>0,self.m.x<1])
             if type(k) != bool and ord(k) == 10:
                 self.enter_tile(scr)
@@ -199,8 +202,8 @@ class Todolist2:
         n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
         self.m.x, self.m.y = 0,0
         win = self.m.wins[n]
-
-        self.m.tile_app(scr, win, d=self.t1)
+        d = eval(f"self.t{n+1}")
+        d = self.m.tile_app(scr, win, d=d)
         self.main(scr)
 
 
