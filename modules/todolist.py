@@ -192,11 +192,28 @@ class Todolist2:
         curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
         curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
         while True:
-            self.m.display_tiles(scr, t1=self.t1, t2=self.t2, t3=self.t3, t4=self.t4)
-            k = self.m.press_key(scr, [self.m.y>0,self.m.y<2, self.m.x>0,self.m.x<1])
-            if type(k) != bool and ord(k) == 10:
-                self.enter_tile(scr)
+            try:
+                self.m.display_tiles(scr, t1=self.t1, t2=self.t2, t3=self.t3, t4=self.t4)
+                k = self.m.press_key(scr, [self.m.y>0,self.m.y<2, self.m.x>0,self.m.x<1])
+                if type(k) != bool and ord(k) == 10:
+                    self.enter_tile(scr)
 
+            except KeyboardInterrupt:
+                break
+
+    def enter_tile(self, scr, n):
+        beg = self.m.xy()
+        #n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
+        #self.m.x, self.m.y = 0,0
+        win = self.m.wins[n]
+        d = eval(f"self.t{n+1}")
+        d = self.m.tile_app(scr, win, d=d)
+        #self.main(scr)
+
+
+        self.m.x, self.m.y = beg
+
+    """
     def enter_tile(self, scr):
         beg = self.m.xy()
         n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
@@ -208,6 +225,7 @@ class Todolist2:
 
 
         self.m.x, self.m.y = beg
+    """
 
 
 if __name__ == '__main__':

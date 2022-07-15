@@ -39,11 +39,7 @@ class Move:
             for x in range(w):
                 scr.addstr(y, x, " ")
 
-    # display tiles
-    def display_tiles(self, scr, t1=[], t2=[], t3=[], t4=[]):
-        """
-        first level in app
-        """
+    def create_tiles(self, scr):
         h,w = scr.getmaxyx()
 
         # localizations of tiles
@@ -55,6 +51,14 @@ class Move:
             ]
         self.wins = [curses.newwin(a,b,c,d) for a,b,c,d in self.vals]
         scr.refresh()
+
+    # display tiles
+    def display_tiles(self, scr, t1=[], t2=[], t3=[], t4=[]):
+        """
+        first level in app
+        """
+
+        self.create_tiles(scr)
 
         for i in range(4):
             for line in eval(f"t{i+1}"):
@@ -141,19 +145,21 @@ class Move:
         """
         win.addstr(self.y,0, f"{item}")
         while key := self.press_key(win, [0,0, 0,0]):
-            #key = self.press_key(win, [0,0, 0,0])
-            win.addstr(self.y,0, f"{item+key}")
-            # press backspace
-            if key in ("KEY_BACKSPACE", '\b', '\x7f'):
-                item = item[:-1]
+            try:
+                # press backspace
+                if key in ("KEY_BACKSPACE", '\b', '\x7f'):
+                    item = item[:-1]
 
-            # press enter
-            # exit insert mode 
-            elif ord(key) == 10:
+                # press enter
+                # exit insert mode 
+                elif ord(key) == 10:
+                    break
+                # press letter
+                elif key in self.a_z:
+                    item += key
+                win.addstr(self.y,0, f"{item+key:{win.getmaxyx()[1]-1}}")
+            except KeyboardInterrupt:
                 break
-            # press letter
-            elif key in self.a_z:
-                item += key
         return item
 
 

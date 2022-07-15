@@ -14,6 +14,11 @@ from modules.move import Move
 class Menu(Move):
     def __init__(self):
         Move.__init__(self)
+
+        self.t1 = {'a':True, 'b':False, 'c':True}
+        self.t2 = {'d':True, 'e':False, 'f':True}
+        self.t3 = {'g':True, 'h':False, 'i':True}
+        self.t4 = {'j':True, 'k':False, 'l':True}
         
 
     # menu what displayes menu
@@ -27,10 +32,12 @@ class Menu(Move):
                     {'start4'}
                 ],
                 "todolist": [
-                    {"launch todolist": lambda: [t:=Todolist(Move()), t.main(scr)]},
-                    {},
-                    {'ale nie'},
-                    {}
+                    #{"launch todolist": lambda: [t:=Todolist(Move()), t.main(scr)]},
+                    #{f"{list({'a':1, 'b':0, 'c':1})}": lambda: [t := Todolist(Move()), t.enter_tile(scr, 0)]},
+                    {f"{list(self.t1)}": lambda: self.enter_tile(scr, 0)},
+                    {f"{list(self.t2)}": lambda: self.enter_tile(scr, 1)},
+                    {f"{list(self.t3)}": lambda: self.enter_tile(scr, 2)},
+                    {f"{list(self.t4)}": lambda: self.enter_tile(scr, 3)},
                 ],
                 "snake": [
                     {"launch snake": lambda: [s:= Snake(Move()), s.main(scr)]},
@@ -47,20 +54,41 @@ class Menu(Move):
             }
 
         while True:
-            curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
-            curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
-            curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
-            curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
-            self.display_menu(scr) 
-            # press a key (execute func in 87 line)
-            l = [self.y>0,self.y<2, self.x>0,self.x<len(self.content)-1]
-            self.key = self.press_key(scr, l)
-            if self.key:
-                self.pressed_a_key(scr)
+            try:
+                curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
+                curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+                curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLUE)
+                curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
+                curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
+                curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
+                """
+                curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
+                curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+                curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
+                curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
+                """
+                self.display_menu(scr) 
+                # press a key (execute func in 87 line)
+                l = [self.y>0,self.y<2, self.x>0,self.x<len(self.content)-1]
+                self.key = self.press_key(scr, l)
+                if self.key:
+                    self.pressed_a_key(scr)
+            except KeyboardInterrupt:
+                break
 
+
+    def enter_tile(self, scr, n):
+        #self.create_tiles(scr)
+        #beg = self.m.xy()
+        #n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
+        #self.m.x, self.m.y = 0,0
+        win = self.wins[n]
+        d = eval(f"self.t{n+1}")
+        d = self.tile_app(scr, win, d=d)
+        #self.main(scr)
 
     # display menu
-    def display_menu(self,scr):
+    def display_menu(self, scr):
         self.clear_board(scr)
 
         # display topbar
