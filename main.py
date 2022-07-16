@@ -4,7 +4,7 @@ import sys
 import json
 import os
 
-from modules.todolist import Todolist2 as Todolist
+#from modules.todolist import Todolist2 as Todolist
 from modules.snake import Snake
 from modules.snapshot_ls import Snapshot
 from modules.move import Move
@@ -23,6 +23,9 @@ class Menu(Move):
 
     # menu what displayes menu
     def main(self, scr): 
+        """
+        first level in app
+        """
         # content
         self.content = { 
                 "start": [
@@ -111,12 +114,17 @@ class Menu(Move):
                     t4=self.content[self.category][3],
             )
 
+        # mark hovering tile
         if self.y > 0:
             self.tiles_for_app(scr)
 
 
     # action in tile
     def tiles_for_app(self, scr):
+        """
+        second level in app
+        main -> tiles_for_app
+        """
         beg = self.x
         self.x = 0 
         while True:
@@ -151,7 +159,8 @@ class Menu(Move):
         # ENTER key
         #elif self.key == "KEY_ENTER":
         elif ord(self.key) == 10:
-            #key = list(self.content)[self.x]
+
+            # launching app in tile
             if type(self.content[self.category][self.y + self.x]) == dict:
                 d = self.content[self.category][self.y + self.x]
                 for value in d.values():
