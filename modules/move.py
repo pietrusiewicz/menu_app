@@ -39,6 +39,7 @@ class Move:
             for x in range(w):
                 scr.addstr(y, x, " ")
 
+    # place windows
     def create_tiles(self, scr):
         h,w = scr.getmaxyx()
 
@@ -49,7 +50,7 @@ class Move:
                 (h//2-4,w//2-6, h//2+2, 3),
                 (h//2-4,w//2-8, h//2+2, w//2+5)
             ]
-        self.wins = [curses.newwin(a,b,c,d) for a,b,c,d in self.vals]
+        self.wins = [curses.newwin(a,b, c,d) for a,b, c,d in self.vals]
         scr.refresh()
 
     # display tiles

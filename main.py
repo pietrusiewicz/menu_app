@@ -4,7 +4,6 @@ import sys
 import json
 import os
 
-#from modules.todolist import Todolist2 as Todolist
 from modules.snake import Snake
 from modules.snapshot_ls import Snapshot
 from modules.move import Move
@@ -37,10 +36,10 @@ class Menu(Move):
                 "todolist": [
                     #{"launch todolist": lambda: [t:=Todolist(Move()), t.main(scr)]},
                     #{f"{list({'a':1, 'b':0, 'c':1})}": lambda: [t := Todolist(Move()), t.enter_tile(scr, 0)]},
-                    {f"{list(self.t1)}": lambda: self.enter_tile(scr, 0)},
-                    {f"{list(self.t2)}": lambda: self.enter_tile(scr, 1)},
-                    {f"{list(self.t3)}": lambda: self.enter_tile(scr, 2)},
-                    {f"{list(self.t4)}": lambda: self.enter_tile(scr, 3)},
+                    {f"{list(self.t1)}": lambda: self.clicked_tile(scr, 0)},
+                    {f"{list(self.t2)}": lambda: self.clicked_tile(scr, 1)},
+                    {f"{list(self.t3)}": lambda: self.clicked_tile(scr, 2)},
+                    {f"{list(self.t4)}": lambda: self.clicked_tile(scr, 3)},
                 ],
                 "snake": [
                     {"launch snake": lambda: [s:= Snake(Move()), s.main(scr)]},
@@ -64,12 +63,6 @@ class Menu(Move):
                 curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
                 curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
                 curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
-                """
-                curses.init_pair(1, curses.COLOR_CYAN, curses.COLOR_BLACK)
-                curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
-                curses.init_pair(3, curses.COLOR_WHITE, curses.COLOR_BLACK)
-                curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
-                """
                 self.display_menu(scr) 
                 # press a key (execute func in 87 line)
                 l = [self.y>0,self.y<2, self.x>0,self.x<len(self.content)-1]
@@ -80,11 +73,8 @@ class Menu(Move):
                 break
 
 
-    def enter_tile(self, scr, n):
-        #self.create_tiles(scr)
-        #beg = self.m.xy()
-        #n = [[0,1], [1,1], [0,2], [1,2]].index(beg)
-        #self.m.x, self.m.y = 0,0
+    # enter tile
+    def clicked_tile(self, scr, n):
         win = self.wins[n]
         d = eval(f"self.t{n+1}")
         d = self.tile_app(scr, win, d=d)
@@ -116,14 +106,14 @@ class Menu(Move):
 
         # mark hovering tile
         if self.y > 0:
-            self.tiles_for_app(scr)
+            self.tiles_for_cat(scr)
 
 
     # action in tile
-    def tiles_for_app(self, scr):
+    def tiles_for_cat(self, scr):
         """
         second level in app
-        main -> tiles_for_app
+        main -> tiles_for_cat
         """
         beg = self.x
         self.x = 0 
@@ -146,7 +136,6 @@ class Menu(Move):
                         value()
 
         self.x = beg
-        self.display_menu(scr)
 
 
     # press a key
