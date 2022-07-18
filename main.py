@@ -18,7 +18,7 @@ class Menu(Move):
         self.t2 = {'d':True, 'e':False, 'f':True}
         self.t3 = {'g':True, 'h':False, 'i':True}
         self.t4 = {'j':True, 'k':False, 'l':True}
-        
+
 
     # menu what displayes menu
     def main(self, scr): 
@@ -36,6 +36,8 @@ class Menu(Move):
                 "todolist": [
                     #{"launch todolist": lambda: [t:=Todolist(Move()), t.main(scr)]},
                     #{f"{list({'a':1, 'b':0, 'c':1})}": lambda: [t := Todolist(Move()), t.enter_tile(scr, 0)]},
+                    #{f"3": lambda: self.clicked_tile(scr, 2)},
+                    #{f"4": lambda: self.clicked_tile(scr, 3)},
                     {f"{list(self.t1)}": lambda: self.clicked_tile(scr, 0)},
                     {f"{list(self.t2)}": lambda: self.clicked_tile(scr, 1)},
                     {f"{list(self.t3)}": lambda: self.clicked_tile(scr, 2)},
@@ -64,7 +66,8 @@ class Menu(Move):
                 curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
                 curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
                 self.display_menu(scr) 
-                # press a key (execute func in 87 line)
+
+                # conditions for move arrows
                 l = [self.y>0,self.y<2, self.x>0,self.x<len(self.content)-1]
                 self.key = self.press_key(scr, l)
                 if self.key:
@@ -75,10 +78,14 @@ class Menu(Move):
 
     # enter tile
     def clicked_tile(self, scr, n):
+        """
+        third level in app
+        main -> tiles_for_cat -> clicked_tile
+        """
         win = self.wins[n]
         d = eval(f"self.t{n+1}")
+        # execute app in tile
         d = self.tile_app(scr, win, d=d)
-        #self.main(scr)
 
     # display menu
     def display_menu(self, scr):
@@ -130,8 +137,8 @@ class Menu(Move):
                 break
             if type(key)!= bool and ord(key) == 10:
 
-                if type(self.content[self.category][self.y-1 + self.x]) == dict:
-                    d = self.content[self.category][self.y-1 + self.x]
+                if type(self.content[self.category][2*(self.y-1) + self.x]) == dict:
+                    d = self.content[self.category][2*(self.y-1) + self.x]
                     for value in d.values():
                         value()
 

@@ -77,9 +77,10 @@ class Move:
         second level in app
         display_tiles -> tile_app
         """
-        self.d = d
         h,w = win.getmaxyx()
         while True:
+
+            # display todolist in tile
             scr.refresh()
             self.fill_color(win, 2)
             for i, line in enumerate(d):
@@ -89,20 +90,21 @@ class Move:
                     win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
 
 
-            win.addstr(len(self.d), 0, f'{"+":{w}}', curses.color_pair(4 if len(self.d) == self.y else 2))
+            win.addstr(len(d), 0, f'{"+":{w}}', curses.color_pair(4 if len(d) == self.y else 2))
             win.refresh()
 
-            k = self.press_key(scr, [self.y>0, self.y<len(self.d), 0,0])
+
+            # press a key
+            k = self.press_key(scr, [self.y>0, self.y<len(d), 0,0])
 
             # arrow - move
             if not k:
-                #self.tile_app(scr,win, d=self.d)
                 continue
             # other keys
             else:
                 # delete item
                 if k in ("KEY_BACKSPACE", '\b', '\x7f'):
-                    item = list(self.d)[self.y]
+                    item = list(d)[self.y]
                     win.addstr(self.y,0, f"Are you sure to delete {item}? y/n")
                     while k := self.press_key(win, [0,0,0,0]).lower():
                         if k == 'y':
@@ -119,7 +121,7 @@ class Move:
                 elif ord(k) in range(32, 127):
                     # edit item
                     if self.y < len(d):
-                        item = list(self.d)[self.y]
+                        item = list(d)[self.y]
                         newitem = self.edit_line(win, f"{item+k}")
                         d[newitem] = d[item]
                         d.pop(item)
