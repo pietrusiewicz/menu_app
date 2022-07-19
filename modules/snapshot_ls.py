@@ -73,12 +73,12 @@ class Snapshot:
         #f.save()
 
     # prepairing to compare
-    def prepare2comparsion(self, d1, d2): # {{{
+    def prepare2comparsion(self, d1, d2):
         """
         func gets 2 dicts
         """
         self.convert_dict2list(d1, 1)
-        self.convert_dict2list(d2, 2) # }}}
+        self.convert_dict2list(d2, 2)
 
     # converts to list
     def convert_dict2list(self, d, n): # {{{
@@ -94,15 +94,16 @@ class Snapshot:
             self.path = self.path[:-1] # }}}
 
     def config_app(self,scr):
+        "edit app"
         username = os.getenv('USER')
         for i, dr in enumerate([_ for _ in map(lambda x: f"/{x}" if os.path.isdir(f'/{x}') else None, os.listdir('/')) if _ !=None]):
             scr.addstr(i,0, f"{dr}")
 
-    def app(self):
+    def app(self, indexes=[-2, -1]):
         self.save_json()
 
         if len(os.listdir('files')) >= 2:
-            d1,d2 = map(lambda x: json.load(open(f"files/{x}", encoding='utf-8')), sorted(os.listdir('files'))[-2:])
+            d1,d2 = map(lambda x: json.load(open(f"files/{x}", encoding='utf-8')), [sorted(os.listdir('files'))[i] for i in indexes])
             self.prepare2comparsion(d1, d2)
 
 if __name__ == '__main__':
