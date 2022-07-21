@@ -25,6 +25,7 @@ class Menu(Move):
         """
         first level in app
         """
+
         # content
         self.content = { 
                 "start": [
@@ -34,10 +35,6 @@ class Menu(Move):
                     {'start4'}
                 ],
                 "todolist": [
-                    #{"launch todolist": lambda: [t:=Todolist(Move()), t.main(scr)]},
-                    #{f"{list({'a':1, 'b':0, 'c':1})}": lambda: [t := Todolist(Move()), t.enter_tile(scr, 0)]},
-                    #{f"3": lambda: self.clicked_tile(scr, 2)},
-                    #{f"4": lambda: self.clicked_tile(scr, 3)},
                     {f"{list(self.t1)}": lambda: self.clicked_tile(scr, 0)},
                     {f"{list(self.t2)}": lambda: self.clicked_tile(scr, 1)},
                     {f"{list(self.t3)}": lambda: self.clicked_tile(scr, 2)},
@@ -50,10 +47,10 @@ class Menu(Move):
                     {}
                 ],
                 "snapshot_ls": [
+                    [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-2, -1])][-1],
+                    [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-3, -2])][-1],
                     {},
-                    {},
-                    {},
-                    {}
+                    {"edit config snapshot_ls"}
                 ]
             }
 
@@ -125,6 +122,7 @@ class Menu(Move):
         beg = self.x
         self.x = 0 
         while True:
+
             self.display_tiles(scr, 
                     t1=self.content[self.category][0],
                     t2=self.content[self.category][1],
@@ -161,19 +159,16 @@ class Menu(Move):
                 d = self.content[self.category][self.y + self.x]
                 for value in d.values():
                     value()
-            """
-            if self.x == 3:
-                if 'modules/config.json' not in os.listdir('modules'):
-                    json.dump({},open('config.json', 'w'))
-                d = json.load(open('config.json'))
-                if 'snapshot_ls' not in d:
-                    d['snapshot_ls'] = []
-                s = Snapshot(d['snapshot_ls'])
-                s.config_app(scr)
-            """
+
+    def get_config(self):
+        if 'config.json' not in os.listdir():
+            d = {'snapshot_ls':['/home'], 'snake':[], 'todolist':[],}
+            json.dump(d, open('config.json', 'w', encoding='utf-8'))
+        self.c = json.load(open('config.json', encoding='utf-8'))
 
 
 if __name__ == '__main__':
     m = Menu()
+    m.get_config()
     curses.wrapper(m.main)
     #m.main()

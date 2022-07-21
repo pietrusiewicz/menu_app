@@ -9,7 +9,7 @@ class Snapshot:
     """
     Make a snapshot for selected directories
     1. difference between 1 and 2 file if they exist
-    2. saves to json all files and dirs in each directory
+    2. saves to json all files and dirs in chosen directory
     """
 
     def __init__(self, ls):
@@ -32,7 +32,7 @@ class Snapshot:
 
         # make json' tree through dirs (23 line)
         for key in dirs:
-            # if path doesn't exist
+            # if key doesn't exist
             if key not in list(d):
                 # is it new?
                 if type(d) == dict:
@@ -55,12 +55,13 @@ class Snapshot:
         # creating list in dict (directory) or string (file)
         for f in os.listdir(path):
             try:
-                if os.path.isdir(path+'/'+f):
-                    #d.append( { f: [] } )
-                    self.get_tree(path+'/'+f)
+                fpath = os.path.isdir(path+'/'+f)
+                if os.path.isdir(fpath):
+                    self.get_tree(fpath)
                 else:
                     d.append( f )
-                    #print(path+'/'+f)
+
+
             except PermissionError:
                 continue
 
@@ -83,12 +84,13 @@ class Snapshot:
         #self.convert_dict2list(d1, 1)
         #self.convert_dict2list(d2, 2)
 
-    # converts to set
+    # converts dict to set
     def convert_dict2set(self, d, n):
         s = self.s1 if n == 1 else self.s2
         for key in d:
             self.path.append(key)
             for i in range(len(d[key])):
+                # enter to dir
                 if type(d[key][i]) == dict:
                     self.convert_dict2set(d[key][i], n)
                     s.add(f"/{'/'.join(self.path[1:])}")
@@ -96,14 +98,15 @@ class Snapshot:
                     s.add(f"/{'/'.join(self.path[1:])}/{d[key][i]}")
             self.path = self.path[:-1]
 
-    def config_app(self,scr):
+    def edit_config(self,scr):
         "edit app"
         username = os.getenv('USER')
         for i, dr in enumerate([_ for _ in map(lambda x: f"/{x}" if os.path.isdir(f'/{x}') else None, os.listdir('/')) if _ !=None]):
             scr.addstr(i,0, f"{dr}")
 
     def compare_jsons(self, indexes=[-2, -1]):
-
+        if 'files' not in os.listdir():
+            os.mkdir('files')
         if len(os.listdir('files')) >= 2:
             d1,d2 = list(map(lambda x: json.load(open(f"files/{x}", encoding='utf-8')), [sorted(os.listdir('files'))[i] for i in indexes]))
             self.convert_dict2set(d1, 1)
@@ -111,14 +114,16 @@ class Snapshot:
             #print(self.s1.difference(self.s2))
             diff = self.s2.difference(self.s1)
             return diff
+        else:
+            return "Unfortunely we haven't snapshot"
         self.s1=set()
         self.s2=set()
 
 if __name__ == '__main__':
-    ls = json.load(open('config.json', encoding='utf-8'))
-    s = Snapshot(['/home'])
+    ls = json.load(open('config.json', encoding='utf-8'))['snapshot_ls']
+    s = Snapshot(ls)
     s.save_json()
-    s.compare_jsons()
+    diff = s.compare_jsons()
     s.compare_jsons([-3,-2])
 """
     #curses.wrapper(Menu)
