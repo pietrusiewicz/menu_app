@@ -1,15 +1,15 @@
-from modules import move
 import curses
+import os
 
-class Program(move.Move):
+class Program:
+    def __init__(self):
+        self.tree = {}
 
-    def main(self, scr):
-        pad = curses.newpad(100,100)
-        for y in range(0,99):
-            for x in range(0,99):
-                pad.addch(y,x, ord('a') + (x*x+y*y) % 26)
-        pad.refresh(0,0, 5,5, 20,75)
+    def main(self, ls=["/home"]):
+        for item in ls:
+            k = os.listdir(item)
+            self.tree[k] = []
 
 if __name__ == '__main__':
     p = Program()
-    curses.wrapper(p.main)
+    p.main()

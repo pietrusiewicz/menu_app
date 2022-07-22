@@ -20,6 +20,11 @@ class Menu(Move):
         self.t4 = {'j':True, 'k':False, 'l':True}
 
 
+    def display_list(self, lines, n):
+        for i, line in enumerate(list(lines)):
+            self.wins[n].addstr(i, 0, line)
+        self.wins[n].refresh()
+
     # menu what displayes menu
     def main(self, scr): 
         """
@@ -47,21 +52,16 @@ class Menu(Move):
                     {}
                 ],
                 "snapshot_ls": [
-                    [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-2, -1])][-1],
-                    [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-3, -2])][-1],
-                    {},
+                    {"last difference": lambda: [s := Snapshot(self.c['snapshot_ls']), self.display_list(s.compare_jsons(), 0)]},
+                    {"one before last": [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-3, -2])]},
+                    {'make snapshot instant': lambda: [s := Snapshot(self.c['snapshot_ls']), s.save_json()]},
                     {"edit config snapshot_ls"}
                 ]
             }
 
         while True:
             try:
-                curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
-                curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
-                curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLUE)
-                curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
-                curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
-                curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
+                self.get_colors()
                 self.display_menu(scr) 
 
                 # conditions for move arrows
@@ -73,26 +73,20 @@ class Menu(Move):
                 break
 
 
-    # enter tile
-    def clicked_tile(self, scr, n):
-        """
-        third level in app
-        main -> tiles_for_cat -> clicked_tile
-        """
-        win = self.wins[n]
-        d = eval(f"self.t{n+1}")
-        # execute app in tile
-        d = self.tile_app(scr, win, d=d)
 
     # display menu
     def display_menu(self, scr):
+        """
+        first level in app
+        main -> tiles_menu
+        """
         self.clear_board(scr)
 
         # display topbar
         menu_str = "/0) start      /1) todolist   /2) snake      /3) snapshot_ls"
         scr.addstr(0,0,menu_str, curses.color_pair(1))
 
-        # mark selected option
+        # mark selected option in topbar
         if self.y == 0:
             start_index = menu_str.find(str(self.x))-1
             end_index = menu_str.find(str(self.x+1))-2
@@ -110,14 +104,14 @@ class Menu(Move):
 
         # mark hovering tile
         if self.y > 0:
-            self.tiles_for_cat(scr)
+            self.tiles_menu(scr)
+            self.display_menu(scr)
 
-
-    # action in tile
-    def tiles_for_cat(self, scr):
+    # action in tiles menu
+    def tiles_menu(self, scr):
         """
         second level in app
-        main -> tiles_for_cat
+        display_menu -> tiles_menu
         """
         beg = self.x
         self.x = 0 
@@ -134,18 +128,28 @@ class Menu(Move):
             if self.y==0:
                 break
             if type(key)!= bool and ord(key) == 10:
-
-                if type(self.content[self.category][2*(self.y-1) + self.x]) == dict:
-                    d = self.content[self.category][2*(self.y-1) + self.x]
+                ditem = self.content[self.category][2*(self.y-1) + self.x]
+                if type(ditem) == dict:
+                    d = ditem
                     for value in d.values():
                         value()
 
         self.x = beg
 
 
+    # enter tile
+    def clicked_tile(self, scr, n):
+        """
+        third level in app
+        display_menu -> tiles_menu -> clicked_tile
+        """
+        win = self.wins[n]
+        d = eval(f"self.t{n+1}")
+        # execute app in tile
+        d = self.tile_app(scr, win, d=d)
+
     # press a key
     def pressed_a_key(self,scr):
-
         # ESCAPE key
         if ord(self.key) == 27:
             sys.exit()
@@ -166,6 +170,13 @@ class Menu(Move):
             json.dump(d, open('config.json', 'w', encoding='utf-8'))
         self.c = json.load(open('config.json', encoding='utf-8'))
 
+    def get_colors(self):
+        curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
+        curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
+        curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLUE)
+        curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
+        curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
+        curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
 
 if __name__ == '__main__':
     m = Menu()
