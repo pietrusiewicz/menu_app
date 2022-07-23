@@ -19,11 +19,12 @@ class Menu(Move):
         self.t3 = {'g':True, 'h':False, 'i':True}
         self.t4 = {'j':True, 'k':False, 'l':True}
 
-
+    """
     def display_list(self, lines, n):
         for i, line in enumerate(list(lines)):
             self.wins[n].addstr(i, 0, line)
         self.wins[n].refresh()
+    """
 
     # menu what displayes menu
     def main(self, scr): 
@@ -31,6 +32,7 @@ class Menu(Move):
         first level in app
         """
 
+        self.get_colors()
         # content
         self.content = { 
                 "start": [
@@ -52,8 +54,9 @@ class Menu(Move):
                     {}
                 ],
                 "snapshot_ls": [
-                    {"last difference": lambda: [s := Snapshot(self.c['snapshot_ls']), self.display_list(s.compare_jsons(), 0)]},
-                    {"one before last": [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-3, -2])]},
+                    [s := Snapshot(self.c['snapshot_ls']), f"{s.compare_jsons()}"][-1],
+                    [s := Snapshot(self.c['snapshot_ls']), f"{s.compare_jsons([-2,-3])}"][-1],
+                    #{"one before last": [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-3, -2])]},
                     {'make snapshot instant': lambda: [s := Snapshot(self.c['snapshot_ls']), s.save_json()]},
                     {"edit config snapshot_ls"}
                 ]
@@ -61,7 +64,6 @@ class Menu(Move):
 
         while True:
             try:
-                self.get_colors()
                 self.display_menu(scr) 
 
                 # conditions for move arrows
