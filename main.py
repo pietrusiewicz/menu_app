@@ -19,12 +19,13 @@ class Menu(Move):
         self.t3 = {'g':True, 'h':False, 'i':True}
         self.t4 = {'j':True, 'k':False, 'l':True}
 
-    """
+
     def display_list(self, lines, n):
         for i, line in enumerate(list(lines)):
             self.wins[n].addstr(i, 0, line)
         self.wins[n].refresh()
-    """
+        self.wins[n].getkey()
+        self.wins[n].getkey()
 
     # menu what displayes menu
     def main(self, scr): 
@@ -34,6 +35,7 @@ class Menu(Move):
 
         self.get_colors()
         # content
+        s = Snapshot(self.c['snapshot_ls'])
         self.content = { 
                 "start": [
                     {"start1"},
@@ -54,10 +56,9 @@ class Menu(Move):
                     {}
                 ],
                 "snapshot_ls": [
-                    [s := Snapshot(self.c['snapshot_ls']), f"{s.compare_jsons()}"][-1],
-                    [s := Snapshot(self.c['snapshot_ls']), f"{s.compare_jsons([-2,-3])}"][-1],
-                    #{"one before last": [s := Snapshot(self.c['snapshot_ls']), s.compare_jsons([-3, -2])]},
-                    {'make snapshot instant': lambda: [s := Snapshot(self.c['snapshot_ls']), s.save_json()]},
+                    {"check last changes": lambda: self.display_list(s.compare_jsons(), 0)},
+                    {"check one before last changes": lambda: self.display_list(s.compare_jsons([-2,-3]), 1)},
+                    {'make snapshot instant': lambda: s.save_json()},
                     {"edit config snapshot_ls"}
                 ]
             }
@@ -165,6 +166,10 @@ class Menu(Move):
                 d = self.content[self.category][self.y + self.x]
                 for value in d.values():
                     value()
+            scr.getkey()
+            scr.getkey()
+            scr.getkey()
+            scr.getkey()
 
     def get_config(self):
         if 'config.json' not in os.listdir():

@@ -14,7 +14,7 @@ class Snapshot:
 
     def __init__(self, ls):
         self.tree = {}
-        [self.get_tree(d) for d in ls]
+        #[self.get_tree(d) for d in ls]
         self.path = []
         self.s1,self.s2 = set(), set()
         #self.l1,self.l2 = [], []
@@ -65,11 +65,11 @@ class Snapshot:
             except PermissionError:
                 continue
 
-
     def print_json(self):
         return json.dumps(self.tree, indent=5)
 
     def save_json(self):
+        [self.get_tree(d) for d in ls]
         if 'files' not in os.listdir():
             os.mkdir('files') 
         name = time.strftime("%Y%m%d%H%M%S")
@@ -106,6 +106,8 @@ class Snapshot:
     def compare_jsons(self, indexes=[-2, -1]):
         self.s1=set()
         self.s2=set()
+        if 'files' not in os.listdir():
+            os.mkdir('files')
 
         if len(os.listdir('files')) >= 2:
             d1,d2 = list(map(lambda x: json.load(open(f"files/{x}", encoding='utf-8')), [sorted(os.listdir('files'))[i] for i in indexes]))
