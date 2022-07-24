@@ -13,11 +13,10 @@ class Snapshot:
     """
 
     def __init__(self, ls):
+        self.ls = ls
         self.tree = {}
-        #[self.get_tree(d) for d in ls]
         self.path = []
         self.s1,self.s2 = set(), set()
-        #self.l1,self.l2 = [], []
 
     # tree about selected path
     def get_tree(self, path):
@@ -69,20 +68,12 @@ class Snapshot:
         return json.dumps(self.tree, indent=5)
 
     def save_json(self):
-        [self.get_tree(d) for d in ls]
+        [self.get_tree(d) for d in self.ls]
         if 'files' not in os.listdir():
             os.mkdir('files') 
         name = time.strftime("%Y%m%d%H%M%S")
         f = open(f'files/{name}.json', 'w')
         json.dump(self.tree, f, indent=5)
-        #f.save()
-    # prepairing to compare
-    #def prepare2comparsion(self, d1, d2):
-        """
-        func gets 2 dicts
-        """
-        #self.convert_dict2list(d1, 1)
-        #self.convert_dict2list(d2, 2)
 
     # converts to set
     def convert_dict2set(self, d, n):
