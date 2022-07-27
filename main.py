@@ -83,28 +83,12 @@ class Menu(Move):
         first level in app
         main -> tiles_menu
         """
+        # refresh screen
         self.clear_board(scr)
 
         # display topbar
-        menu_str = "/0) start      /1) todolist   /2) snake      /3) snapshot_ls"
-        scr.addstr(0,0,menu_str, curses.color_pair(1))
-
-        # mark selected option in topbar
-        if self.y == 0:
-            start_index = menu_str.find(str(self.x))-1
-            end_index = menu_str.find(str(self.x+1))-2
-            scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
-
-            #key = list(self.content)[self.x]
-            self.category = list(self.content)[self.x]
-
-            self.display_tiles(scr, 
-                    t1=self.content[self.category][0],
-                    t2=self.content[self.category][1],
-                    t3=self.content[self.category][2],
-                    t4=self.content[self.category][3],
-            )
-
+        self.display_topbar(scr)
+        
         # mark hovering tile
         if self.y > 0:
             self.tiles_menu(scr)
@@ -131,11 +115,15 @@ class Menu(Move):
             if self.y==0:
                 break
             if type(key)!= bool and ord(key) == 10:
-                ditem = self.content[self.category][2*(self.y-1) + self.x]
-                if type(ditem) == dict:
+                d = self.content[self.category][2*(self.y-1) + self.x]
+                if type(d) == dict:
+                    app = list(d.values())[0]
+                    app()
+                    """
                     d = ditem
                     for value in d.values():
                         value()
+                    """
 
         self.x = beg
 
@@ -151,7 +139,7 @@ class Menu(Move):
         # execute app in tile
         d = self.tile_app(scr, win, d=d)
 
-    # press a key
+    # press a key not arrow
     def pressed_a_key(self,scr):
         # ESCAPE key
         if ord(self.key) == 27:
@@ -162,14 +150,18 @@ class Menu(Move):
         elif ord(self.key) == 10:
 
             # launching app in tile
-            if type(self.content[self.category][self.y + self.x]) == dict:
-                d = self.content[self.category][self.y + self.x]
+            app_name = self.content[self.category][self.y + self.x]
+            # launch from self.content
+            if type(app_name) == dict:
+                d = app_name
                 for value in d.values():
                     value()
+            """
             scr.getkey()
             scr.getkey()
             scr.getkey()
             scr.getkey()
+            """
 
     def get_config(self):
         if 'config.json' not in os.listdir():
@@ -184,6 +176,26 @@ class Menu(Move):
         curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
         curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
         curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
+
+    def display_topbar(self, scr):
+        menu_str = "/0) start      /1) todolist   /2) snake      /3) snapshot_ls"
+        scr.addstr(0,0,menu_str, curses.color_pair(1))
+
+        # mark selected option in topbar
+        if self.y == 0:
+            start_index = menu_str.find(str(self.x))-1
+            end_index = menu_str.find(str(self.x+1))-2
+            scr.addstr(0, start_index, menu_str[start_index:end_index], curses.color_pair(2))
+
+            #key = list(self.content)[self.x]
+            self.category = list(self.content)[self.x]
+
+            self.display_tiles(scr, 
+                    t1=self.content[self.category][0],
+                    t2=self.content[self.category][1],
+                    t3=self.content[self.category][2],
+                    t4=self.content[self.category][3],
+            )
 
 if __name__ == '__main__':
     m = Menu()

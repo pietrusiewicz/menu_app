@@ -107,6 +107,8 @@ class Snapshot:
             #print(self.s1.difference(self.s2))
             diff = self.s2.difference(self.s1)
             return diff
+        else:
+            return {"Sorry we haven't snapshot"}
 
 if __name__ == '__main__':
     ls = json.load(open('config.json', encoding='utf-8'))
