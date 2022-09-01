@@ -38,10 +38,10 @@ class Snake:
             self.moves += 1
             #key = scr.getkey()
             l3 = [
-                (1 if self.m.y > 0 else h-2) if self.direction != 's' else 0,
-                (1 if self.m.y < h-2 else '0') if self.direction != 'n' else 0,
-                (1 if self.m.x > 0 else w-1) if self.direction != 'e' else 0,
-                (1 if self.m.x < w-1 else '0') if self.direction != 'w' else 0,
+                (1 if self.m.y > 0 else h-2) if self.direction != 's' else 0, # north
+                (1 if self.m.y < h-2 else '0') if self.direction != 'n' else 0, # south
+                (1 if self.m.x > 0 else w-1) if self.direction != 'e' else 0, # west
+                (1 if self.m.x < w-1 else '0') if self.direction != 'w' else 0, # east
             ]
             """
             l3 = [

@@ -91,7 +91,8 @@ class Snapshot:
     def config_app(self,scr):
         "edit app"
         username = os.getenv('USER')
-        for i, dr in enumerate([_ for _ in map(lambda x: f"/{x}" if os.path.isdir(f'/{x}') else None, os.listdir('/')) if _ !=None]):
+        ls = [_ for _ in map(lambda x: f"/{x}" if os.path.isdir(f'/{x}') else None, os.listdir('/')) if _ !=None]
+        for i, dr in enumerate(ls):
             scr.addstr(i,0, f"{dr}")
 
     def compare_jsons(self, indexes=[-2, -1]):

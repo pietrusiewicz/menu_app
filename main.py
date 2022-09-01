@@ -25,7 +25,6 @@ class Menu(Move):
             self.wins[n].addstr(i, 0, line)
         self.wins[n].refresh()
         self.wins[n].getkey()
-        self.wins[n].getkey()
 
     # menu what displayes menu
     def main(self, scr): 

@@ -66,7 +66,7 @@ class Move:
                 self.wins[i].addstr(line, curses.color_pair(2))
             self.fill_color(self.wins[i], 2)
 
-        if self.y > 0:
+        if self.y > 0 and self.y < 3:
             i = [[0,1], [1,1], [0,2], [1,2]].index(self.xy())
             self.fill_color(self.wins[i], 4)
 
