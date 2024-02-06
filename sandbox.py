@@ -1,24 +1,46 @@
+from curses import wrapper
 import curses
 import os
 import json
 import time
+
 #from crontab import CronTab
 
 
-class Snapshot:
+class Explorer:
     """
-    Make a snapshot for selected directories
-    1. difference between 1 and 2 file if they exist
-    2. saves to json all files and dirs in each directory
+    Simple explorer-like app
+    On left side: list in pwd directories
+    On right side: list in pwd files
     """
 
-    def __init__(self, ls):
-        self.tree = {}
-        [self.get_tree(d) for d in ls]
-        self.path = []
-        self.s1,self.s2 = set(), set()
+    def __init__(self):
+        self.path = os.getcwd().split("/")[1:]
+        #self.s1,self.s2 = set(), set()
         #self.l1,self.l2 = [], []
+    
+    def start(self, scr):
+        scr.clear()
+        h,w = scr.getmaxyx()
 
+        Lwin = curses.newwin(h, w//2, 0, 0)
+        Rwin = curses.newwin(h, w//2, 0, w//2)
+        Lwin.addstr("Gawno")
+
+        Lwin.refresh()
+        scr.getkey()
+        #print(self.path)
+        while True:
+          dirsfiles = [ (i,dirorfile, os.path.isfile(dirorfile)) for i, dirorfile in enumerate(os.listdir()) ]
+          #TODO
+          # display lists of dirs and files
+          Lwin.addstr(0,0, dirsfiles[0][1])
+          Rwin.addstr(0,0, dirsfiles[3][1])
+          Lwin.refresh()
+          Rwin.refresh()
+          scr.getkey()
+
+    """
     # tree about selected path
     def get_tree(self, path):
         "It does tree of selected directories"
@@ -77,9 +99,9 @@ class Snapshot:
         #f.save()
     # prepairing to compare
     #def prepare2comparsion(self, d1, d2):
-        """
+        "
         func gets 2 dicts
-        """
+        ""
         #self.convert_dict2list(d1, 1)
         #self.convert_dict2list(d2, 2)
 
@@ -113,24 +135,7 @@ class Snapshot:
             #print(self.s1.difference(self.s2))
             diff = self.s2.difference(self.s1)
             return diff
-
+      """
 if __name__ == '__main__':
-    ls = json.load(open('config.json', encoding='utf-8'))
-    s = Snapshot(['/home'])
-    s.save_json()
-    diff = s.compare_jsons()
-    print(diff)
-    diff = s.compare_jsons([-3,-2])
-    print(diff)
-"""
-    #curses.wrapper(Menu)
-    s = Snapshot(['/home'])
-    s.app()
-    #s.save_json()
-    #if len(os.listdir('files')) >= 2:
-        #d1,d2 = map(lambda x: json.load(open(f"files/{x}", encoding='utf-8')), sorted(os.listdir('files'))[-2:])
-        #s.prepare2comparsion(d1, d2)
-        #print(s.s1.difference(s.s2))
-        #print('='*20)
-        #print(s.s2.difference(s.s1))
-"""
+    e = Explorer()
+    wrapper(e.start)
