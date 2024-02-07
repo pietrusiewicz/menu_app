@@ -6,6 +6,7 @@ import os
 
 from modules.snake import Snake
 from modules.snapshot_ls import Snapshot
+from modules.todolist import Todolist
 from modules.move import Move
 
 
@@ -14,10 +15,12 @@ class Menu(Move):
     def __init__(self):
         Move.__init__(self)
 
-        self.t1 = {'a':True, 'b':False, 'c':True}
-        self.t2 = {'d':True, 'e':False, 'f':True}
-        self.t3 = {'g':True, 'h':False, 'i':True}
-        self.t4 = {'j':True, 'k':False, 'l':True}
+        """
+        load_t1-t4 is created for todolist contained under 48 line
+        """
+        load_t1_t4 = Todolist.load_tasks()
+        self.t1, self.t2, self.t3, self.t4 = load_t1_t4
+        
 
 
     def display_list(self, lines, n):
@@ -35,7 +38,7 @@ class Menu(Move):
         self.get_colors()
         # content
         s = Snapshot(self.c['snapshot_ls'])
-        self.content = { 
+        self.content = {
                 "start": [
                     {"start1"},
                     {'start2'},
@@ -59,7 +62,15 @@ class Menu(Move):
                     {"check one before last changes": lambda: self.display_list(s.compare_jsons([-2,-3]), 1)},
                     {'make snapshot instant': lambda: s.save_json()},
                     {"edit config snapshot_ls"}
+                ],
+                """
+                "explorer": [
+                  {"enter explorer": lambda: explorer.start()},
+                  {"godzina dzien": time.strftime("%D")},
+                  {"vim-like editor": lambda: explorer.editor},
+                  {"sprawdz wydajnosc pc": lambda: liczby_pierwsze()},
                 ]
+                """
             }
 
         while True:
@@ -140,7 +151,7 @@ class Menu(Move):
 
     # press a key not arrow
     def pressed_a_key(self,scr):
-        # ESCAPE key
+        # ESC key
         if ord(self.key) == 27:
             sys.exit()
         
