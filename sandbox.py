@@ -35,8 +35,7 @@ class Explorer(Move):
         Lwin.refresh()
         scr.getkey()
         #print(self.path)
-        self.x,self.y=0,0
-        Lside = True
+        self.x,self.y,Lside=0,0,True
       
         while True:
           dirs,files=[],[]
@@ -52,24 +51,23 @@ class Explorer(Move):
           scr.refresh()
           
           # display file list in tile
-          #Lwin.addstr(0, 0, "..", curses.color_pair(2+Lside*2))
           for i, line in enumerate(dirs):
-            Lwin.addstr(i, 0, f"{line}", curses.color_pair(2+Lside*2))
+            Lwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
             if self.y == i:
-              Lwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
+              isunder = curses.color_pair(2+Lside*2) 
               if Lside:
-                Lwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2) + curses.A_UNDERLINE)
-              #Lwin.addstr(len(dirs), 0, f'{"+":{w}}', curses.color_pair(4 if len(dirs) == dy else 2))
+                isunder += curses.A_UNDERLINE
+              Lwin.addstr(i, 0, f"{line}", isunder)
           Lwin.refresh()
 
           # display file list in tile
           for i, line in enumerate(files):
             Rwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
             if self.x == i:
-              Rwin.addstr(i, 0, f"{line}", curses.color_pair(2+Lside*2))
+              isunder = curses.color_pair(2+Lside*2) 
               if not Lside:
-                Rwin.addstr(i, 0, f"{line}", curses.color_pair(2+Lside*2) + curses.A_UNDERLINE)
-              #Lwin.addstr(len(dirs), 0, f'{"+":{w}}', curses.color_pair(4 if len(dirs) == dy else 2))
+                isunder += curses.A_UNDERLINE
+              Rwin.addstr(i, 0, f"{line}", isunder)
           Rwin.refresh()
 
           # press a key
@@ -104,22 +102,7 @@ class Explorer(Move):
                 self.x,self.y=0,0
                 #print(os.listdir())
               continue
-            """
-            if self.y < len(d):
-              d[list(d)[self.y]] = not d[list(d)[self.y]]
-            else:
-              key = self.edit_line(win, k)
-              d[key] = False
-            """
-
-          #TODO
-          # display lists of dirs and files
-          #for i,d in enumerate(dirs):
-            #Lwin.addstr(i,0,d)
-          #for i,f in enumerate(files):
-            #Rwin.addstr(i,0,f)
-          #Lwin.addstr(0,0, dirsfiles[0][1])
-          #Rwin.addstr(0,0, dirsfiles[3][1])
+              
           Lwin.refresh()
           Rwin.refresh()
           #scr.getkey()
