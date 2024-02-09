@@ -1,4 +1,5 @@
 import curses
+from os import killpg
 
 class Move:
 
@@ -6,7 +7,7 @@ class Move:
         self.a_z = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-=0!@#$%^&*()_+[]{};'\\:\"|,./<>?~\t "
         self.x, self.y = 0,0
 
-    def press_key(self, scr, cnds=[1,1,1,1], strictness=0):
+    def press_key(self, scr, cnds=[1,1,1,1], strictness=0, backspace=lambda: "", enter=lambda: "", escape=lambda: ""):
         """
         cnds - there are CONDITIONS for possibility pressing a key
         strictness - if strictness == 1, then returning value in range [0,3]
@@ -33,6 +34,12 @@ class Move:
                     return 3
                 else: self.x = self.x+1 if cnds[3] == 1 else int(cnds[3])
             return False
+        elif k in ('KEY_BACKSPACE', '\b', '\x7f'):
+          backspace()
+        elif ord(k) == 10:
+          enter()
+        elif ord(k) == 27:
+          escape()
         else:
             return k
     
@@ -82,8 +89,10 @@ class Move:
         display_tiles -> tile_app
         """
         h,w = win.getmaxyx()
+        
         while True:
 
+            surplus = 0
             # display todolist in tile
             #scr.refresh()
             self.fill_color(win, 2)
@@ -92,10 +101,10 @@ class Move:
                 win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c))
                 if self.y == i:
                     win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
-            
 
+            # TODO
             win.addstr(len(d), 0, f'{"+":{w}}', curses.color_pair( 4 if len(d) == self.y else 2 ) )
-
+            
           
             win.refresh()
             # press a key
