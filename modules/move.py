@@ -11,29 +11,33 @@ class Move:
         """
         cnds - there are CONDITIONS for possibility pressing a key
         strictness - if strictness == 1, then returning value in range [0,3]
-        backspace,enter,escape - command what's doing after pressing one of these keys
+        backspace,enter,escape - command, after pressing one of these keys
         """
         k = scr.getkey()
         if k in ['KEY_RIGHT', 'KEY_LEFT', 'KEY_UP', 'KEY_DOWN']:
             if k == 'KEY_UP' and cnds[0]:
                 if strictness:
                     return 0
-                else: self.y = self.y-1 if cnds[0] == 1 else int(cnds[0])
+                else: 
+                    self.y = self.y-1 if cnds[0] == 1 else int(cnds[0])
 
             if k == 'KEY_DOWN' and cnds[1]:
                 if strictness:
                     return 1
-                else: self.y = self.y+1 if cnds[1] == 1 else int(cnds[1])
+                else: 
+                    self.y = self.y+1 if cnds[1] == 1 else int(cnds[1])
 
             if k == 'KEY_LEFT' and cnds[2]:
                 if strictness:
                     return 2
-                else: self.x = self.x-1 if cnds[2] == 1 else int(cnds[2])
+                else: 
+                    self.x = self.x-1 if cnds[2] == 1 else int(cnds[2])
             
             if k == 'KEY_RIGHT' and cnds[3]:
                 if strictness:
                     return 3
-                else: self.x = self.x+1 if cnds[3] == 1 else int(cnds[3])
+                else: 
+                    self.x = self.x+1 if cnds[3] == 1 else int(cnds[3])
             return False
         
         elif k in ('KEY_BACKSPACE', '\b', '\x7f'):
@@ -45,7 +49,7 @@ class Move:
         elif ord(k) == 27:
           escape()
         else:
-            return k
+          return k
     
     # clear board
     def clear_board(self, scr):
@@ -93,8 +97,8 @@ class Move:
         display_tiles -> tile_app
         """
         h,w = win.getmaxyx()
-        
-        while True:
+        self.w=True
+        while self.w:
 
             surplus = 0
             # display todolist in tile
@@ -107,12 +111,21 @@ class Move:
                     win.addstr(i, 0, f"{line:{w}}", curses.color_pair(c) + curses.A_UNDERLINE)
 
             # TODO
-            win.addstr(len(d), 0, f'{"+":{w}}', curses.color_pair( 4 if len(d) == self.y else 2 ) )
-            
+            try:
+              win.addstr(len(d), 0, f'{"+":{w}}', curses.color_pair( 4 if len(d) == self.y else 2 ) )
+            except:
+              surplus += 1
+              continue
           
             win.refresh()
+            
+            # TODO
+            #self.d = d
             # press a key
-            k = self.press_key(scr, [self.y>0, self.y<len(d), 0,0])
+            k = self.press_key(scr, cnds=[self.y>0, self.y<len(d), 0,0],
+                                    escape=lambda: self.exit_while()
+                                    
+                              )
 
             # arrow - move
             if not k:
@@ -131,10 +144,6 @@ class Move:
                             elif k == 'n':
                                 break
 
-                # exit tile - ESC key
-                elif ord(k) == 27:
-                    break
-
                 # press letter        A - z
                 elif ord(k) in range(32, 127):
                     # edit item
@@ -150,13 +159,20 @@ class Move:
 
                 # click in line ENTER
                 elif ord(k) == 10:
+                  #d[list(d)[self.y]] = not d[list(d)[self.y]] if self.y < len(d) else [key := self.edit_line(win),d[key] := False]
+                  # move to function
                     if self.y < len(d):
                         d[list(d)[self.y]] = not d[list(d)[self.y]]
+                        #b = complex(imag=int(d[list(d)[self.y]]))
+                        #d[list(d)[self.y]] *= b*b
                     else:
                         key = self.edit_line(win)
-                        d[key] = False
+                        d[self.edit_line(win)] = False
         return d
 
+    # FOR TODOLIST
+    def exit_while(self):
+      self.w=False
     
     # edit line in tile
     def edit_line(self, win, item=''):
