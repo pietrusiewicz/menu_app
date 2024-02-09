@@ -17,62 +17,74 @@ class Explorer(Move):
     """
 
     def __init__(self):
-      """
-      File Explorer applicatoin
-      """
-      self.path = os.getcwd().split("/")[1:]
+        """
+        File Explorer application
+        """
+        self.path = os.getcwd().split("/")[1:]
+        
         #self.s1,self.s2 = set(), set()
         #self.l1,self.l2 = [], []
     
     def start(self, scr):
-      
+        """
+        Starts the application
+        """
         self.get_colors()
-        scr.clear()
-        h,w = scr.getmaxyx()
-
-        Lwin,Rwin = curses.newwin(h, w//2, 0, 0), curses.newwin(h, w//2, 0, w//2)
         
-        Lwin.refresh()
-        scr.getkey()
-        #print(self.path)
-        self.x,self.y,Lside=0,0,True
-      
-        while True:
-          dirs,files=[],[]
+        h,w = scr.getmaxyx()
+        self.Lwin,self.Rwin = curses.newwin(h, w//2, 0, 0), curses.newwin(h, w//2, 0, w//2)
+        scr.clear()
+        self.x,self.y, Lside=0,0, True
+
+        self.w = True
+        while self.w:
+          self.dirs,files=[],[]
           for df in os.listdir():
-            if os.path.isdir(df): dirs.append(df)
+            if os.path.isdir(df): self.dirs.append(df)
             if os.path.isfile(df): files.append(df)
-          dirs.insert(0,"..")
-          # display dir list in tile
+          self.dirs.insert(0,"..")
+          
+          
+          # prepare windows for dirs/files
+          self.fill_color(self.Lwin, 2+Lside*2)
+          self.fill_color(self.Rwin, 4-Lside*2)
+          scr.refresh()
 
           
-          self.fill_color(Lwin, 2+Lside*2)
-          self.fill_color(Rwin, 4-Lside*2)
-          scr.refresh()
-          
-          # display file list in tile
-          for i, line in enumerate(dirs):
-            Lwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
+          # display dir list in tile
+          for i, line in enumerate(self.dirs):
+            self.Lwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
             if self.y == i:
               isunder = curses.color_pair(2+Lside*2) 
               if Lside:
                 isunder += curses.A_UNDERLINE
-              Lwin.addstr(i, 0, f"{line}", isunder)
-          Lwin.refresh()
+              self.Lwin.addstr(i, 0, f"{line}", isunder)
+          self.Lwin.refresh()
 
+          
           # display file list in tile
           for i, line in enumerate(files):
-            Rwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
+            self.Rwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
             if self.x == i:
               isunder = curses.color_pair(2+Lside*2) 
               if not Lside:
                 isunder += curses.A_UNDERLINE
-              Rwin.addstr(i, 0, f"{line}", isunder)
-          Rwin.refresh()
+              self.Rwin.addstr(i, 0, f"{line}", isunder)
+          self.Rwin.refresh()
 
           # press a key
           dx,dy=self.x,self.y
-          k=self.press_key(scr, [self.y>0, self.y<len(dirs)-1, self.x>0,self.x<len(files)-1])
+          self.Lwin.refresh()
+          self.Rwin.refresh()
+          k=self.press_key(scr, 
+                           cnds=[self.y>0 or len(self.dirs)==1,
+                                 self.y<len(self.dirs)-1 or len(self.dirs)==1,
+                                 self.x>0,
+                                 self.x<len(files)-1],
+                           enter=lambda: self.enter_dir() if Lside else 0,
+                           escape=lambda: self.exit_dir()
+                          )
+          
           dx-=self.x; dy-=self.y
           # 0 is meaning nothing changed
           if dx!=dy:
@@ -89,24 +101,18 @@ class Explorer(Move):
             if k in ("KEY_BACKSPACE", '\b', '\x7f'):
               pass
 
-            # esc key
-            elif ord(k) == 27:
-              break
+    def enter_dir(self):
+      if len(self.dirs) == 1:
+        os.chdir('..')
+      else:
+        os.chdir(self.dirs[self.y])
+      self.Lwin.clear()
+      self.Rwin.clear()
+      self.x,self.y = 0,0
 
-            # click in line ENTER
-            elif ord(k) == 10:
-              if Lside:
-                os.chdir(dirs[self.y])
-                Lwin.clear()
-                Rwin.clear()
-                self.x,self.y=0,0
-                #print(os.listdir())
-              continue
-              
-          Lwin.refresh()
-          Rwin.refresh()
-          #scr.getkey()
-
+    def exit_dir(self):
+      self.w = False
+      
     def get_colors(self):
       curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
       curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
