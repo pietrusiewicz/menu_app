@@ -11,6 +11,7 @@ class Move:
         """
         cnds - there are CONDITIONS for possibility pressing a key
         strictness - if strictness == 1, then returning value in range [0,3]
+        backspace,enter,escape - command what's doing after pressing one of these keys
         """
         k = scr.getkey()
         if k in ['KEY_RIGHT', 'KEY_LEFT', 'KEY_UP', 'KEY_DOWN']:
@@ -34,10 +35,13 @@ class Move:
                     return 3
                 else: self.x = self.x+1 if cnds[3] == 1 else int(cnds[3])
             return False
+        
         elif k in ('KEY_BACKSPACE', '\b', '\x7f'):
           backspace()
+        
         elif ord(k) == 10:
           enter()
+        
         elif ord(k) == 27:
           escape()
         else:
