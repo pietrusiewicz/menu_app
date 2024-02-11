@@ -10,31 +10,38 @@ class Move:
     def press_key(self, scr, cnds=[1,1,1,1], strictness=0, backspace=lambda: "", enter=lambda: "", escape=lambda: ""):
         """
         cnds - there are CONDITIONS for possibility pressing a key
-        strictness - if strictness == 1, then returning value in range [0,3]
+        strictness - bridge for implementing new functionality works 
+          if strictness == 0, only changing values self.x, self.y
+          if strictness == 1, returning only number ASCII of pressed key
+          if strictness == 2, returning that above and changing values self.x, self.y
         backspace,enter,escape - command, after pressing one of these keys
         """
         k = scr.getkey()
         if k in ['KEY_RIGHT', 'KEY_LEFT', 'KEY_UP', 'KEY_DOWN']:
             if k == 'KEY_UP' and cnds[0]:
-                self.y = self.y-1 if cnds[0] == 1 else int(cnds[0])
+                if strictness in (0,2):
+                  self.y = self.y-1 if cnds[0] == 1 else int(cnds[0])
                 if strictness:
                     return 0
 
             elif k == 'KEY_DOWN' and cnds[1]:
-                self.y = self.y+1 if cnds[1] == 1 else int(cnds[1])
+                if strictness in (0,2):
+                    self.y = self.y+1 if cnds[1] == 1 else int(cnds[1])
                 if strictness:
                     return 1
 
             elif k == 'KEY_LEFT' and cnds[2]:
-                self.x = self.x-1 if cnds[2] == 1 else int(cnds[2])
+                if strictness in (0,2):
+                    self.x = self.x-1 if cnds[2] == 1 else int(cnds[2])
                 if strictness:
                     return 2
-            
+
             elif k == 'KEY_RIGHT' and cnds[3]:
-                self.x = self.x+1 if cnds[3] == 1 else int(cnds[3])
+                if strictness in (0,2):
+                    self.x = self.x+1 if cnds[3] == 1 else int(cnds[3])
                 if strictness:
                     return 3
-                    
+
             
             return False
         
@@ -129,7 +136,8 @@ class Move:
                               )
 
             # arrow - move
-            if not k:
+            #if not k:
+            if k in range(0,4):
                 continue
             # other keys
             else:
