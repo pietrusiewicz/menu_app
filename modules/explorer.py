@@ -3,8 +3,10 @@ import curses
 import os
 import json
 import time
-from modules.move import Move
-
+try:
+  from modules.move import Move
+except ModuleNotFoundError:
+  from move import Move
 
 #from crontab import CronTab
 
@@ -27,7 +29,7 @@ class Explorer(Move):
         """
         Starts the application
         """
-        self.get_colors()
+        #self.get_colors()
 
         h,w = scr.getmaxyx()
         self.Lwin,self.Rwin = curses.newwin(h-4,w//2-6, 2,3), curses.newwin(h-4,w//2-8, 2,w//2+5)
@@ -53,7 +55,7 @@ class Explorer(Move):
           for i, line in enumerate(self.dirs):
             self.Lwin.addstr(i, 0, f"{line}", curses.color_pair(4-Lside*2))
             if self.y == i:
-              isunder = curses.color_pair(2+Lside*2) 
+              isunder = curses.color_pair(2+Lside*2)
               if Lside:
                 isunder += curses.A_UNDERLINE
               self.Lwin.addstr(i, 0, f"{line}", isunder)
@@ -112,7 +114,7 @@ class Explorer(Move):
     def exit_dir(self):
       self.w = False
 
-
+    """
     def get_colors(self):
       curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
       curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
@@ -120,13 +122,32 @@ class Explorer(Move):
       curses.init_pair(4, curses.COLOR_BLACK, curses.COLOR_BLUE)
       curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
       curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
-
-
+    """
+    """
     def fill_color(self, win, n):
       win.bkgd(' ', curses.color_pair(n))
       win.refresh()
-
+    """
+    def editor(self, scr): 
+      """
+      short explaination: VIM is editor, where you're deciding what to do with your file
+      Vim-like editor where you can edit files
+      hjkl is replaced with gbyh mnemonic move controls
+      insert mode - pressing i
+      
+      """
+      h,w = scr.getmaxyx()
+      win = curses.newwin(h-4,w-6, 2,3)
+      self.fill_color(win, 4)
+      win.addstr(0,0, "gawno")
+      win.refresh()
+      win.getkey()
+      self.w=True
+      while self.w:
+        #TODO  
+        #key = self.press_key(scr, cnds=[self.y>0,self.y<,0,0], strictness=2)
 
 if __name__ == '__main__':
     e = Explorer()
+    #wrapper(e.editor)
     wrapper(e.start)
