@@ -1,6 +1,6 @@
 <h1>TERMINAL REBORN</h1>
 <ul>
-    <li>Snapshot->Explorer</li>
+    <li>Snapshot->Explorer-<b>DONE</b></li>
     <li>Todolist z sqlite</li>
     <li>Vim-like edytor hjkl->gbyh</li>
     <li>interaktywny kalendarz</li>
