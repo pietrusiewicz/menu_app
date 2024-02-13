@@ -10,6 +10,7 @@ from modules.snapshot_ls import Snapshot
 from modules.todolist import Todolist
 from modules.move import Move
 from modules.explorer import Explorer
+from modules.primary import Wydajnosc
 
 #from sandbox import Explorer
 
@@ -36,11 +37,11 @@ class Menu(Move):
         first level in app
         """
 
-    self.get_colors()
+    self.load_colors()
     # content
     #s = Snapshot(self.c['snapshot_ls'])
     self.content = {
-        "start": [{"start1"}, {'start2'}, {'start3'}, {'start4'}],
+        "start": [{"start1"}, {'start2'}, {'start3'}, {'wydajnosc': lambda: Wydajnosc(scr)}],
         "todolist": [
             {
                 f"{list(self.t1)}": lambda: self.clicked_tile(scr, 0)
@@ -59,7 +60,8 @@ class Menu(Move):
             "launch snake":
             lambda: print("maintenance break")
             #lambda: [s := Snake(Move()), s.main(scr)]
-        }, {}, {}, {}],
+        }, 
+        {}, {}, {}],
         "explorer": [
           {
             "enter explorer": lambda: [e:=Explorer(), e.start(scr)]
@@ -133,6 +135,7 @@ class Menu(Move):
           cnds=[self.y > 0, self.y < 2, self.x > 0, self.x < 1],
           enter=lambda: list(self.content[self.category][2 * (
               self.y - 1) + self.x].values())[0]() )
+      
       if self.y == 0:
         break
       """
@@ -194,7 +197,10 @@ class Menu(Move):
       json.dump(d, open('config.json', 'w', encoding='utf-8'))
     self.c = json.load(open('config.json', encoding='utf-8'))
 
-  def get_colors(self):
+  def load_colors(self):
+    """
+    loading colors
+    """
     curses.init_pair(1, curses.COLOR_RED, curses.COLOR_BLUE)
     curses.init_pair(2, curses.COLOR_BLACK, curses.COLOR_CYAN)
     curses.init_pair(3, curses.COLOR_GREEN, curses.COLOR_BLUE)
