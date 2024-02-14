@@ -105,7 +105,7 @@ class Menu(Move):
     self.clear_board(scr)
 
     # display topbar
-    self.display_topbar(scr)
+    self.topbar(scr)
 
     # mark hovering tile
     if self.y > 0:
@@ -208,7 +208,7 @@ class Menu(Move):
     curses.init_pair(5, curses.COLOR_BLACK, curses.COLOR_RED)
     curses.init_pair(6, curses.COLOR_BLACK, curses.COLOR_GREEN)
 
-  def display_topbar(self, scr):
+  def topbar(self, scr):
     menu_str = "/0) start      /1) todolist   /2) snake      /3) explorer"
     scr.addstr(0, 0, menu_str, curses.color_pair(1))
 
