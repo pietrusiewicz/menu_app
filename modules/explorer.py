@@ -128,6 +128,7 @@ class Explorer(Move):
       win.bkgd(' ', curses.color_pair(n))
       win.refresh()
     """
+    # TODO
     def editor(self, scr): 
       """
       short explaination: VIM is editor, where you're deciding what to do with your file
@@ -139,13 +140,19 @@ class Explorer(Move):
       h,w = scr.getmaxyx()
       win = curses.newwin(h-4,w-6, 2,3)
       self.fill_color(win, 4)
+      self.x,self.y = 0,0
       win.addstr(0,0, "gawno")
       win.refresh()
       win.getkey()
       self.w=True
+      # TODO
       while self.w:
         #TODO  
-        #key = self.press_key(scr, cnds=[self.y>0,self.y<,0,0], strictness=2)
+        key = self.press_key(scr, cnds=[self.y>0,self.y<h-5,self.x>0,self.x<w-7], strictness=2)
+        win.addstr(self.y,self.x, "")
+        win.refresh()
+
+        #win.addstr(self.y, self.x-1, key)
 
 if __name__ == '__main__':
     e = Explorer()
