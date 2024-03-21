@@ -11,5 +11,5 @@
 To launch program:<ol>
     <li>clone this repository</li>
     <li>find file <b>main.py</b></li>
-    <li>launch it by python3 main.py</li>
+    <li>launch it by <code>python3 main.py</code></li>
 </ol>
